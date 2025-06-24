@@ -7,6 +7,11 @@
 # nor does it submit to any jurisdiction.
 #
 
+from .bootstrap import BootstrapResult
+from .bootstrap import Bootstrappable
+from .bootstrap import bootstrap
+from .bootstrap import enable_bootstrap
+from .bootstrap import resample
 from .deterministic import abs_error
 from .deterministic import cosine_similarity
 from .deterministic import error
@@ -25,16 +30,21 @@ from .ensemble import spread
 
 __all__ = [
     "abs_error",
+    "BootstrapResult",
+    "Bootstrappable",
+    "bootstrap",
     "cosine_similarity",
     "crps_from_cdf",
     "crps_from_ensemble",
     "crps_from_gaussian",
+    "enable_bootstrap",
     "error",
     "mean_abs_error",
     "mean_error",
     "mean_squared_error",
     "pearson_correlation",
     "quantile_score",
+    "resample",
     "root_mean_squared_error",
     "spread",
     "squared_error",
