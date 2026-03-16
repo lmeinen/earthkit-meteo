@@ -1496,8 +1496,7 @@ def lcl_temperature(
 
         .. math::
 
-            t_{LCL} =
-            td - (0.212 + 1.571\\times 10^{-3} (td - t_{0}) - 4.36\\times 10^{-4} (t - t_{0})) (t - td)
+            t_{LCL} = td - (0.212 + 1.571\times 10^{-3} (td - t_{0}) - 4.36\times 10^{-4} (t - t_{0})) (t - td)
 
       where :math:`t_{0}` is the triple point of water (see :data:`earthkit.meteo.constants.T0`).
 
@@ -1505,7 +1504,7 @@ def lcl_temperature(
 
         .. math::
 
-            t_{LCL} = 56.0 +  \\frac{1}{\\frac{1}{td - 56} + \\frac{log(\\frac{t}{td})}{800}}
+            t_{LCL} = 56.0 +  \frac{1}{\frac{1}{td - 56} + \frac{log(\frac{t}{td})}{800}}
 
 
     Implementations
