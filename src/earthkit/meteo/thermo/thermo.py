@@ -240,7 +240,7 @@ def vapour_pressure_from_specific_humidity(
 
     .. math::
 
-        e = \frac{p\;q}{\epsilon\; (1 + q(\frac{1}{\epsilon} -1 ))}
+        e = \frac{pq}{\epsilon (1 + q(\frac{1}{\epsilon} -1 ))}
 
     with :math:`\epsilon =  R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
 
@@ -297,7 +297,7 @@ def vapour_pressure_from_mixing_ratio(
 
     .. math::
 
-        e = \frac{p\;w}{\epsilon + w}
+        e = \frac{pw}{\epsilon + w}
 
     with :math:`\epsilon =  R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
 
@@ -474,7 +474,7 @@ def saturation_vapour_pressure(
 
     .. math::
 
-        e_{sat} = a_{1}\\;exp \\left(a_{3}\\frac{t-273.16}{t-a_{4}}\\right)
+        e_{sat} = a_{1}\operatorname{exp} \left(a_{3}\frac{t-273.16}{t-a_{4}}\right)
 
     where the parameters are set as follows:
 
@@ -490,9 +490,9 @@ def saturation_vapour_pressure(
 
     .. math::
 
-        \\alpha(t) e_{wsat}(t) + (1 - \\alpha(t)) e_{isat}(t)
+        \alpha(t) e_{wsat}(t) + (1 - \alpha(t)) e_{isat}(t)
 
-    with :math:`\\alpha(t) = (\\frac{t-t_{i}}{t_{0}-t_{i}})^2`.
+    with :math:`\alpha(t) = (\frac{t-t_{i}}{t_{0}-t_{i}})^2`.
 
 
     Implementations
@@ -743,11 +743,11 @@ def saturation_mixing_ratio_slope(
 
     .. math::
 
-        \\frac{\\partial w_{s}}{\\partial t} = \\frac{\\epsilon\\; p}{(p-e_{s})^{2}} \\frac{d e_{s}}{d t}
+        \frac{\partial w_{s}}{\partial t} = \frac{\epsilon p}{(p-e_{s})^{2}} \frac{d e_{s}}{d t}
 
     where
 
-        * :math:`\\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
+        * :math:`\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
         * :math:`e_{s}` is the :func:`saturation_vapour_pressure` for the given ``phase``
 
 
@@ -825,12 +825,12 @@ def saturation_specific_humidity_slope(
 
     .. math::
 
-        \\frac{\\partial q_{s}}{\\partial t} =
-        \\frac{\\epsilon\\; p}{(p+e_{s}(\\epsilon - 1))^{2}} \\frac{d e_{s}}{d t}
+        \frac{\partial q_{s}}{\partial t} =
+        \frac{\epsilon p}{(p+e_{s}(\epsilon - 1))^{2}} \frac{d e_{s}}{d t}
 
     where
 
-        * :math:`\\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
+        * :math:`\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
         * :math:`e_{s}` is the :func:`saturation_vapour_pressure` for the given ``phase``
 
 
@@ -934,7 +934,7 @@ def relative_humidity_from_dewpoint(
 
     .. math::
 
-        r = 100 \\frac {e_{wsat}(td)}{e_{wsat}(t)}
+        r = 100 \frac {e_{wsat}(td)}{e_{wsat}(t)}
 
     where :math:`e_{wsat}` is the :func:`saturation_vapour_pressure` over water.
 
@@ -996,7 +996,7 @@ def relative_humidity_from_specific_humidity(
 
     .. math::
 
-        r = 100 \\frac {e(q, p)}{e_{msat}(t)}
+        r = 100 \frac {e(q, p)}{e_{msat}(t)}
 
     where:
 
@@ -1187,7 +1187,7 @@ def specific_humidity_from_relative_humidity(
 
     .. math::
 
-        e(q, p) = r\; \frac{e_{msat}(t)}{100}
+        e(q, p) = r \frac{e_{msat}(t)}{100}
 
     where:
 
@@ -1251,7 +1251,7 @@ def dewpoint_from_relative_humidity(
 
     .. math::
 
-        e_{wsat}(td) = \frac{r\; e_{wsat}(t)}{100}
+        e_{wsat}(td) = \frac{r e_{wsat}(t)}{100}
 
     where:
 
@@ -1886,25 +1886,24 @@ def ept_from_dewpoint(
 
         .. math::
 
-            \\Theta_{e} = \\Theta\\; exp(\\frac{L_{v}\\; q}{c_{pd}\\; t_{LCL}})
+            \Theta_{e} = \Theta \operatorname{exp}(\frac{L_{v} q}{c_{pd} t_{LCL}})
 
     * "bolton35": Eq (35) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} = \\Theta (\\frac{10^{5}}{p})^{\\kappa 0.28 w} exp(\\frac{2675 w}{t_{LCL}})
+            \Theta_{e} = \Theta (\frac{10^{5}}{p})^{\kappa 0.28 w} \operatorname{exp}(\frac{2675 w}{t_{LCL}})
 
     * "bolton39": Eq (39) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} =
-            t (\\frac{10^{5}}{p-e})^{\\kappa} (\\frac{t}{t_{LCL}})^{0.28 w} exp[(\\frac{3036}{t_{LCL}} -
-            1.78)w(1+0.448\\; w)]
+            \Theta_{e} = t (\frac{10^{5}}{p-e})^{\kappa} (\frac{t}{t_{LCL}})^{0.28 w} \operatorname{exp}[(\frac{3036}{t_{LCL}} -
+            1.78)w(1+0.448 w)]
 
     where:
 
-        * :math:`\\Theta` is the :func:`potential_temperature`
+        * :math:`\Theta` is the :func:`potential_temperature`
         * :math:`t_{LCL}` is the temperature at the Lifting Condestation Level computed
           with :func:`lcl_temperature` using option:
 
@@ -1917,7 +1916,7 @@ def ept_from_dewpoint(
           (see :data:`earthkit.meteo.constants.Lv`)
         * :math:`c_{pd}` is the specific heat of dry air on constant pressure
           (see :data:`earthkit.meteo.constants.c_pd`)
-        * :math:`\\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`)
+        * :math:`\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`)
 
 
     Implementations
@@ -2043,25 +2042,23 @@ def saturation_ept(
 
         .. math::
 
-            \\Theta_{esat} = \\Theta\\; exp(\\frac{L_{v}\\; q_{sat}}{c_{pd}\\; t})
+            \Theta_{esat} = \Theta \operatorname{exp}(\frac{L_{v} q_{sat}}{c_{pd} t})
 
     * "bolton35": Eq (35) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} = \\Theta (\\frac{10^{5}}{p})^{\\kappa 0.28 w_{sat}}\\;
-            exp(\\frac{2675\\; w_{sat}}{t})
+            \Theta_{e} = \Theta (\frac{10^{5}}{p})^{\kappa 0.28 w_{sat}} \operatorname{exp}(\frac{2675 w_{sat}}{t})
 
     * "bolton39": Eq (39) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} =
-            t (\\frac{10^{5}}{p-e_{sat}})^{\\kappa} exp[(\\frac{3036}{t} - 1.78)w_{sat}(1+0.448\\; w_{sat})]
+            \Theta_{e} = t (\frac{10^{5}}{p-e_{sat}})^{\kappa} \operatorname{exp}[(\frac{3036}{t} - 1.78)w_{sat}(1+0.448 w_{sat})]
 
     where:
 
-        * :math:`\\Theta` is the :func:`potential_temperature`
+        * :math:`\Theta` is the :func:`potential_temperature`
         * :math:`e_{sat}` is the :func:`saturation_vapor_pressure`
         * :math:`q_{sat}` is the :func:`saturation_specific_humidity`
         * :math:`w_{sat}` is the :func:`saturation_mixing_ratio`

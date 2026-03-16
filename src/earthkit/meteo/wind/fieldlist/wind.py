@@ -227,7 +227,7 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
 
     .. math::
 
-        w = - \frac{\omega\; t R_{d}}{p g}
+        w = - \frac{\omega  t R_{d}}{p g}
 
     where
 

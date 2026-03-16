@@ -229,7 +229,7 @@ def w_from_omega(omega: ArrayLike, t: ArrayLike, p: ArrayLike) -> ArrayLike:
 
     .. math::
 
-        w = - \frac{\omega\; t R_{d}}{p g}
+        w = - \frac{\omega  t R_{d}}{p g}
 
     where
 

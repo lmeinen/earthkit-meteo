@@ -129,7 +129,7 @@ def vapour_pressure_from_specific_humidity(q: ArrayLike, p: ArrayLike) -> ArrayL
 
     .. math::
 
-        e = \frac{p\;q}{\epsilon\; (1 + q(\frac{1}{\epsilon} -1 ))}
+        e = \frac{pq}{\epsilon (1 + q(\frac{1}{\epsilon} -1 ))}
 
     with :math:`\epsilon =  R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
 
@@ -158,7 +158,7 @@ def vapour_pressure_from_mixing_ratio(w: ArrayLike, p: ArrayLike) -> ArrayLike:
 
     .. math::
 
-        e = \frac{p\;w}{\epsilon + w}
+        e = \frac{pw}{\epsilon + w}
 
     with :math:`\epsilon =  R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
 
@@ -263,7 +263,7 @@ def saturation_vapour_pressure(t: ArrayLike, phase: str = "mixed") -> ArrayLike:
 
     .. math::
 
-        e_{sat} = a_{1}\;exp \left(a_{3}\frac{t-273.16}{t-a_{4}}\right)
+        e_{sat} = a_{1} exp \left(a_{3}\frac{t-273.16}{t-a_{4}}\right)
 
     where the parameters are set as follows:
 
@@ -410,7 +410,7 @@ def saturation_mixing_ratio_slope(
 
     .. math::
 
-        \frac{\partial w_{s}}{\partial t} = \frac{\epsilon\; p}{(p-e_{s})^{2}} \frac{d e_{s}}{d t}
+        \frac{\partial w_{s}}{\partial t} = \frac{\epsilon  p}{(p-e_{s})^{2}} \frac{d e_{s}}{d t}
 
     where
 
@@ -469,7 +469,7 @@ def saturation_specific_humidity_slope(
     .. math::
 
         \frac{\partial q_{s}}{\partial t} =
-        \frac{\epsilon\; p}{(p+e_{s}(\epsilon - 1))^{2}} \frac{d e_{s}}{d t}
+        \frac{\epsilon  p}{(p+e_{s}(\epsilon - 1))^{2}} \frac{d e_{s}}{d t}
 
     where
 
@@ -671,7 +671,7 @@ def specific_humidity_from_relative_humidity(t: ArrayLike, r: ArrayLike, p: Arra
 
     .. math::
 
-        e(q, p) = r\; \frac{e_{msat}(t)}{100}
+        e(q, p) = r  \frac{e_{msat}(t)}{100}
 
     where:
 
@@ -707,7 +707,7 @@ def dewpoint_from_relative_humidity(t: ArrayLike, r: ArrayLike) -> ArrayLike:
 
     .. math::
 
-        e_{wsat}(td) = \frac{r\; e_{wsat}(t)}{100}
+        e_{wsat}(td) = \frac{r  e_{wsat}(t)}{100}
 
     where:
 
@@ -1372,7 +1372,7 @@ def ept_from_dewpoint(t: ArrayLike, td: ArrayLike, p: ArrayLike, method: str = "
 
         .. math::
 
-            \Theta_{e} = \Theta\; exp(\frac{L_{v}\; q}{c_{pd}\; t_{LCL}})
+            \Theta_{e} = \Theta  exp(\frac{L_{v}  q}{c_{pd}  t_{LCL}})
 
     * "bolton35": Eq (35) from [Bolton1980]_ is used:
 
@@ -1387,7 +1387,7 @@ def ept_from_dewpoint(t: ArrayLike, td: ArrayLike, p: ArrayLike, method: str = "
 
             \Theta_{e} =
             t (\frac{10^{5}}{p-e})^{\kappa} (\frac{t}{t_{LCL}})^{0.28 w} exp[(\frac{3036}{t_{LCL}} -
-            1.78)w(1+0.448\; w)]
+            1.78)w(1+0.448  w)]
 
     where:
 
@@ -1463,20 +1463,20 @@ def saturation_ept(t: ArrayLike, p: ArrayLike, method: str = "ifs") -> ArrayLike
 
         .. math::
 
-            \Theta_{esat} = \Theta\; exp(\frac{L_{v}\; q_{sat}}{c_{pd}\; t})
+            \Theta_{esat} = \Theta  exp(\frac{L_{v}  q_{sat}}{c_{pd}  t})
 
     * "bolton35": Eq (35) from [Bolton1980]_ is used:
 
         .. math::
 
-            \Theta_{e} = \Theta (\frac{10^{5}}{p})^{\kappa 0.28 w_{sat}}\; exp(\frac{2675\; w_{sat}}{t})
+            \Theta_{e} = \Theta (\frac{10^{5}}{p})^{\kappa 0.28 w_{sat}}  exp(\frac{2675  w_{sat}}{t})
 
     * "bolton39": Eq (39) from [Bolton1980]_ is used:
 
         .. math::
 
             \Theta_{e} =
-            t (\frac{10^{5}}{p-e_{sat}})^{\kappa} exp[(\frac{3036}{t} - 1.78)w_{sat}(1+0.448\; w_{sat})]
+            t (\frac{10^{5}}{p-e_{sat}})^{\kappa} exp[(\frac{3036}{t} - 1.78)w_{sat}(1+0.448  w_{sat})]
 
     where:
 

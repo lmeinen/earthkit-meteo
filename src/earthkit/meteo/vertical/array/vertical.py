@@ -75,9 +75,9 @@ def pressure_at_model_levels(
 
     .. math::
 
-        p_{k+1/2} = A_{k+1/2} + p_{s}\; B_{k+1/2}
+        p_{k+1/2} = A_{k+1/2} + p_{s}  B_{k+1/2}
 
-        p_{k} = \frac{1}{2}\; (p_{k-1/2} + p_{k+1/2})
+        p_{k} = \frac{1}{2}  (p_{k-1/2} + p_{k+1/2})
 
     where
 
@@ -379,7 +379,7 @@ def geopotential_from_geopotential_height(gh):
 
     .. math::
 
-        z = gh\; g
+        z = gh  g
 
     where :math:`g` is the gravitational acceleration on the surface of
     the Earth (see :py:attr:`meteo.constants.g`)
@@ -408,7 +408,7 @@ def geopotential_height_from_geometric_height(h, R_earth=constants.R_earth):
 
     .. math::
 
-        gh = \frac{h\; R_{earth}}{R_{earth} + h}
+        gh = \frac{h  R_{earth}}{R_{earth} + h}
 
     where :math:`R_{earth}` is the average radius of the Earth (see :py:attr:`meteo.constants.R_earth`)
     """
@@ -436,7 +436,7 @@ def geopotential_from_geometric_height(h, R_earth=constants.R_earth):
 
     .. math::
 
-        z = \frac{h\; g\; R_{earth}}{R_{earth} + h}
+        z = \frac{h  g  R_{earth}}{R_{earth} + h}
 
     where
 
@@ -468,7 +468,7 @@ def geometric_height_from_geopotential_height(gh, R_earth=constants.R_earth):
 
     .. math::
 
-        h = \frac{R_{earth}\; gh}{R_{earth} - gh}
+        h = \frac{R_{earth}  gh}{R_{earth} - gh}
 
     where :math:`R_{earth}` is the average radius of the Earth (see :py:attr:`meteo.constants.R_earth`)
     """
@@ -594,9 +594,9 @@ def pressure_on_hybrid_levels(
 
     .. math::
 
-        p_{k+1/2} = A_{k+1/2} + p_{s}\; B_{k+1/2}
+        p_{k+1/2} = A_{k+1/2} + p_{s}  B_{k+1/2}
 
-        p_{k} = \frac{1}{2}\; (p_{k-1/2} + p_{k+1/2})
+        p_{k} = \frac{1}{2}  (p_{k-1/2} + p_{k+1/2})
 
     where
 

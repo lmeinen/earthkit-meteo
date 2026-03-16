@@ -189,7 +189,7 @@ def w_from_omega(omega: xr.DataArray, t: xr.DataArray, p: xr.DataArray) -> xr.Da
 
     .. math::
 
-        w = - \frac{\omega\; t R_{d}}{p g}
+        w = - \frac{\omega  t R_{d}}{p g}
 
     where
 

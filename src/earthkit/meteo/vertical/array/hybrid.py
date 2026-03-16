@@ -77,9 +77,9 @@ def hybrid_level_parameters(n_levels: int, model: str = "ifs") -> Tuple[NDArray[
 
       .. math::
 
-        p_{k+1/2} = A_{k+1/2} + p_{s}\; B_{k+1/2}
+        p_{k+1/2} = A_{k+1/2} + p_{s}  B_{k+1/2}
 
-        p_{k} = \frac{1}{2}\; (p_{k-1/2} + p_{k+1/2})
+        p_{k} = \frac{1}{2}  (p_{k-1/2} + p_{k+1/2})
 
       where
 

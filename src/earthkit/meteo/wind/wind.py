@@ -314,7 +314,7 @@ def w_from_omega(
 
     .. math::
 
-        w = - \frac{\omega\; t R_{d}}{p g}
+        w = - \frac{\omega  t R_{d}}{p g}
 
     where
 

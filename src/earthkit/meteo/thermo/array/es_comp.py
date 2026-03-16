@@ -51,7 +51,7 @@ def compute_es(t, phase):
 
     .. math::
 
-        e_{sat} = a_{1}\;exp \left(a_{3}\frac{t-273.16}{t-a_{4}}\right)
+        e_{sat} = a_{1}exp \left(a_{3}\frac{t-273.16}{t-a_{4}}\right)
 
     where the parameters are set as follows:
 
