@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Literal
 from typing import TypeVar
 
@@ -46,7 +48,9 @@ def error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.additive_bias>`_ function.
+        This function leverages the
+        `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
 
     Parameters
     ----------
@@ -108,7 +112,9 @@ def mean_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.additive_bias>`_ function.
+        This function leverages the
+        `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
 
     Parameters
     ----------
@@ -162,7 +168,9 @@ def abs_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_ function.
+        This function leverages the
+        `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_
+        function.
 
     Parameters
     ----------
@@ -223,7 +231,9 @@ def mean_abs_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_ function.
+        This function leverages the
+        `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_
+        function.
 
     Parameters
     ----------
@@ -243,7 +253,14 @@ def mean_abs_error(
     xarray object
         The mean absolute error between the forecast and observations.
     """
-    return abs_error(fcst, obs, agg_method="mean", agg_dim=over, agg_weights=weights, is_angular=is_angular)
+    return abs_error(
+        fcst,
+        obs,
+        agg_method="mean",
+        agg_dim=over,
+        agg_weights=weights,
+        is_angular=is_angular,
+    )
 
 
 def squared_error(
@@ -273,7 +290,9 @@ def squared_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_ function.
+        This function leverages the
+        `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_
+        function.
 
     Parameters
     ----------
@@ -334,7 +353,9 @@ def mean_squared_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_ function.
+        This function leverages the
+        `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_
+        function.
 
     Parameters
     ----------
@@ -391,7 +412,9 @@ def root_mean_squared_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_ function.
+        This function leverages the
+        `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_
+        function.
 
     Parameters
     ----------
@@ -632,3 +655,97 @@ def pearson_correlation(
     covar = covar - fc_mean * ob_mean
     result = covar / np.sqrt(fs_var2 * ob_var2)
     return result.where(np.isfinite(result))
+
+
+def kge(
+    fcst: xr.DataArray,
+    obs: xr.DataArray,
+    over: str | list[str],
+    method: Literal["original", "modified"] = "original",
+    return_components: bool = False,
+) -> T:
+    r"""
+    Calculates the Kling-Gupta Efficiency (KGE) between a forecast and observations.
+
+    .. warning:: Experimental API. This function may change or be removed without notice.
+
+    The KGE is defined as follows:
+
+    .. math::
+        :nowrap:
+
+        \begin{align*}
+        \text{KGE} = & \begin{cases}
+        1 - \sqrt{(\rho - 1)^2 +
+        (\alpha - 1)^2 + (\beta - 1)^2} & \text{if method = "original"} \\
+        1 - \sqrt{(\rho - 1)^2 +
+        (\gamma - 1)^2 + (\beta - 1)^2} & \text{if method = "modified"} \\
+        \end{cases}
+        \end{align*}
+
+    Each of the components of the KGE is defined as follows:
+
+    .. math::
+
+        \beta = \frac{\mu_f}{\mu_o}
+        \alpha = \frac{\sigma_f}{\sigma_o}
+        \gamma = \frac{\alpha}{\beta}
+
+    where:
+        - :math:`\rho`  = Pearson's correlation coefficient between observed and forecast values.
+        - :math:`f` and :math:`o` are forecast and observed values,
+          respectively
+        - :math:`\mu_f` and :math:`\mu_o` are the means of forecast and
+          observed values, respectively
+        - :math:`\sigma_f` and :math:`\sigma_o` are the standard deviations of
+          forecast and observed values, respectively
+
+    .. seealso::
+
+        This function leverages the
+        `scores.continuous.kge <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
+
+    Parameters
+    ----------
+    fcst : xarray.DataArray
+        The forecast xarray.
+    obs : xarray.DataArray
+        The observations xarray.
+    over : str or list of str
+        The dimension(s) over which to compute the kge.
+    method : str, optional
+        The method to compute the variability term :math:`\alpha`. Can be
+        either "original" or "modified". Default is "modified".
+    return_components : bool, optional
+        Whether to return the individual components (:math:`\rho`,
+        :math:`\alpha` (or :math:`\gamma`), :math:`\beta`) along with the KGE
+        value. Default is False.
+
+    Returns
+    -------
+    xarray object
+        The KGE between the forecast and observations.
+    """
+    if method not in ("original", "modified"):
+        raise ValueError("method must be one of 'original' or 'modified'")
+    scores = _import_scores_or_prompt_install()
+
+    if method == "original":
+        return scores.continuous.kge(fcst, obs, reduce_dims=over, include_components=return_components)
+
+    kge = scores.continuous.kge(fcst, obs, reduce_dims=over, include_components=True)
+
+    if method == "modified":
+        kge["alpha"] = kge["alpha"] / kge["beta"]
+
+        kge["kge"] = 1 - (
+            ((kge["rho"] - 1) ** 2 + ((kge["alpha"] - 1) ** 2) + ((kge["beta"] - 1) ** 2)) ** 0.5
+        )
+
+        kge = kge.rename({"alpha": "gamma"})
+
+    if return_components:
+        return kge
+    else:
+        return kge["kge"]

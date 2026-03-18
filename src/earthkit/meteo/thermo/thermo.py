@@ -10,6 +10,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from typing import Any  # noqa: F401
+from typing import TypeAlias
 from typing import overload
 
 from earthkit.meteo.utils.decorators import dispatch
@@ -18,77 +20,112 @@ if TYPE_CHECKING:
     import xarray  # type: ignore[import]
 
 
+ArrayLike: TypeAlias = Any
+
+
+@overload
+def celsius_to_kelvin(t: "ArrayLike") -> "ArrayLike": ...
+
+
 @overload
 def celsius_to_kelvin(t: "xarray.DataArray") -> "xarray.DataArray": ...
 
 
-def celsius_to_kelvin(t: "xarray.DataArray") -> "xarray.DataArray":
+def celsius_to_kelvin(t: "ArrayLike" | "xarray.DataArray") -> "ArrayLike" | "xarray.DataArray":
     r"""Convert temperature values from Celsius to Kelvin.
 
     Parameters
     ----------
-    t : xarray.DataArray
+    t : array-like | xarray.DataArray
         Temperature in Celsius units
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Temperature in Kelvin units
 
 
     Implementations
     ------------------------
-    :func:`celsius_to_kelvin` calls one of the following implementations depending on the type of the input arguments:
+    :func:`celsius_to_kelvin` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.celsius_to_kelvin` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.celsius_to_kelvin` for array-like
 
+
+    - :py:meth:`earthkit.meteo.thermo.xarray.celsius_to_kelvin`
+      for xarray.DataArray
+
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(celsius_to_kelvin)(t)
+    dispatched = dispatch(celsius_to_kelvin, fieldlist=False, array=True)
+    return dispatched(t)
+
+
+@overload
+def kelvin_to_celsius(t: "ArrayLike") -> "ArrayLike": ...
 
 
 @overload
 def kelvin_to_celsius(t: "xarray.DataArray") -> "xarray.DataArray": ...
 
 
-def kelvin_to_celsius(t: "xarray.DataArray") -> "xarray.DataArray":
+def kelvin_to_celsius(t: "ArrayLike" | "xarray.DataArray") -> "ArrayLike" | "xarray.DataArray":
     r"""Convert temperature values from Kelvin to Celsius.
 
     Parameters
     ----------
-    t : xarray.DataArray
+    t : array-like | xarray.DataArray
         Temperature in Kelvin units
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Temperature in Celsius units
 
 
     Implementations
     ------------------------
-    :func:`kelvin_to_celsius` calls one of the following implementations depending on the type of the input arguments:
+    :func:`kelvin_to_celsius` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.kelvin_to_celsius` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.kelvin_to_celsius` for array-like
 
+
+    - :py:meth:`earthkit.meteo.thermo.xarray.kelvin_to_celsius`
+      for xarray.DataArray
+
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(kelvin_to_celsius)(t)
+    dispatched = dispatch(kelvin_to_celsius, fieldlist=False, array=True)
+    return dispatched(t)
 
 
 @overload
-def specific_humidity_from_mixing_ratio(w: "xarray.DataArray") -> "xarray.DataArray": ...
+def specific_humidity_from_mixing_ratio(
+    w: "ArrayLike",
+) -> "ArrayLike": ...
 
 
-def specific_humidity_from_mixing_ratio(w: "xarray.DataArray") -> "xarray.DataArray":
+@overload
+def specific_humidity_from_mixing_ratio(
+    w: "xarray.DataArray",
+) -> "xarray.DataArray": ...
+
+
+def specific_humidity_from_mixing_ratio(
+    w: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the specific humidity from mixing ratio.
 
     Parameters
     ----------
-    w : xarray.DataArray
+    w : array-like | xarray.DataArray
         Mixing ratio (kg/kg)
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Specific humidity (kg/kg)
 
 
@@ -102,29 +139,44 @@ def specific_humidity_from_mixing_ratio(w: "xarray.DataArray") -> "xarray.DataAr
 
     Implementations
     ------------------------
-    :func:`specific_humidity_from_mixing_ratio` calls one of the following implementations depending on the type of the input arguments:
+    :func:`specific_humidity_from_mixing_ratio` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_mixing_ratio` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.specific_humidity_from_mixing_ratio` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_mixing_ratio`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(specific_humidity_from_mixing_ratio)(w)
+    dispatched = dispatch(specific_humidity_from_mixing_ratio, fieldlist=False, array=True)
+    return dispatched(w)
 
 
 @overload
-def mixing_ratio_from_specific_humidity(q: "xarray.DataArray") -> "xarray.DataArray": ...
+def mixing_ratio_from_specific_humidity(
+    q: "ArrayLike",
+) -> "ArrayLike": ...
 
 
-def mixing_ratio_from_specific_humidity(q: "xarray.DataArray") -> "xarray.DataArray":
+@overload
+def mixing_ratio_from_specific_humidity(
+    q: "xarray.DataArray",
+) -> "xarray.DataArray": ...
+
+
+def mixing_ratio_from_specific_humidity(
+    q: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the mixing ratio from specific humidity.
 
     Parameters
     ----------
-    q : xarray.DataArray
+    q : array-like | xarray.DataArray
         Specific humidity (kg/kg)
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Mixing ratio (kg/kg)
 
 
@@ -138,12 +190,24 @@ def mixing_ratio_from_specific_humidity(q: "xarray.DataArray") -> "xarray.DataAr
 
     Implementations
     ------------------------
-    :func:`mixing_ratio_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`mixing_ratio_from_specific_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.mixing_ratio_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.mixing_ratio_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.mixing_ratio_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(mixing_ratio_from_specific_humidity)(q)
+    dispatched = dispatch(mixing_ratio_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(q)
+
+
+@overload
+def vapour_pressure_from_specific_humidity(
+    q: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -154,21 +218,21 @@ def vapour_pressure_from_specific_humidity(
 
 
 def vapour_pressure_from_specific_humidity(
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the vapour pressure from specific humidity.
 
     Parameters
     ----------
-    q: xarray.DataArray
+    q: array-like | xarray.DataArray
         Specific humidity (kg/kg)
-    p: xarray.DataArray
+    p: array-like | xarray.DataArray
         Pressure (Pa)
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Vapour pressure (Pa)
 
 
@@ -176,19 +240,31 @@ def vapour_pressure_from_specific_humidity(
 
     .. math::
 
-        e = \frac{p\;q}{\epsilon\; (1 + q(\frac{1}{\epsilon} -1 ))}
+        e = \frac{pq}{\epsilon (1 + q(\frac{1}{\epsilon} -1 ))}
 
     with :math:`\epsilon =  R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
 
 
     Implementations
     ------------------------
-    :func:`vapour_pressure_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`vapour_pressure_from_specific_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.vapour_pressure_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.vapour_pressure_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.vapour_pressure_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(vapour_pressure_from_specific_humidity)(q, p)
+    dispatched = dispatch(vapour_pressure_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(q, p)
+
+
+@overload
+def vapour_pressure_from_mixing_ratio(
+    w: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -199,21 +275,21 @@ def vapour_pressure_from_mixing_ratio(
 
 
 def vapour_pressure_from_mixing_ratio(
-    w: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    w: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the vapour pressure from mixing ratio.
 
     Parameters
     ----------
-    w: xarray.DataArray
+    w: array-like | xarray.DataArray
         Mixing ratio (kg/kg)
-    p: xarray.DataArray
+    p: array-like | xarray.DataArray
         Pressure (Pa)
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Vapour pressure (Pa)
 
 
@@ -221,19 +297,32 @@ def vapour_pressure_from_mixing_ratio(
 
     .. math::
 
-        e = \frac{p\;w}{\epsilon + w}
+        e = \frac{pw}{\epsilon + w}
 
     with :math:`\epsilon =  R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
 
 
     Implementations
     ------------------------
-    :func:`vapour_pressure_from_mixing_ratio` calls one of the following implementations depending on the type of the input arguments:
+    :func:`vapour_pressure_from_mixing_ratio` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.vapour_pressure_from_mixing_ratio` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.vapour_pressure_from_mixing_ratio` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.vapour_pressure_from_mixing_ratio`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(vapour_pressure_from_mixing_ratio)(w, p)
+    dispatched = dispatch(vapour_pressure_from_mixing_ratio, fieldlist=False, array=True)
+    return dispatched(w, p)
+
+
+@overload
+def specific_humidity_from_vapour_pressure(
+    e: "ArrayLike",
+    p: "ArrayLike",
+    eps: float = 1e-4,
+) -> "ArrayLike": ...
 
 
 @overload
@@ -245,24 +334,24 @@ def specific_humidity_from_vapour_pressure(
 
 
 def specific_humidity_from_vapour_pressure(
-    e: "xarray.DataArray",
-    p: "xarray.DataArray",
+    e: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     eps: float = 1e-4,
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the specific humidity from vapour pressure.
 
     Parameters
     ----------
-    e: xarray.DataArray
+    e: array-like | xarray.DataArray
         Vapour pressure (Pa)
-    p: xarray.DataArray
+    p: array-like | xarray.DataArray
         Pressure (Pa)
     eps: number
         Where p - e < ``eps`` nan is returned.
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Specific humidity (kg/kg)
 
 
@@ -277,12 +366,25 @@ def specific_humidity_from_vapour_pressure(
 
     Implementations
     ------------------------
-    :func:`specific_humidity_from_vapour_pressure` calls one of the following implementations depending on the type of the input arguments:
+    :func:`specific_humidity_from_vapour_pressure` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_vapour_pressure` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.specific_humidity_from_vapour_pressure` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_vapour_pressure`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(specific_humidity_from_vapour_pressure)(e, p, eps=eps)
+    dispatched = dispatch(specific_humidity_from_vapour_pressure, fieldlist=False, array=True)
+    return dispatched(e, p, eps=eps)
+
+
+@overload
+def mixing_ratio_from_vapour_pressure(
+    e: "ArrayLike",
+    p: "ArrayLike",
+    eps: float = 1e-4,
+) -> "ArrayLike": ...
 
 
 @overload
@@ -294,24 +396,24 @@ def mixing_ratio_from_vapour_pressure(
 
 
 def mixing_ratio_from_vapour_pressure(
-    e: "xarray.DataArray",
-    p: "xarray.DataArray",
+    e: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     eps: float = 1e-4,
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the mixing ratio from vapour pressure.
 
     Parameters
     ----------
-    e: xarray.DataArray
+    e: array-like | xarray.DataArray
         Vapour pressure (Pa)
-    p: xarray.DataArray
+    p: array-like | xarray.DataArray
         Pressure (Pa)
     eps: number
         Where p - e < ``eps`` nan is returned.
 
     Returns
     -------
-    xarray.DataArray
+    array-like | xarray.DataArray
         Mixing ratio (kg/kg).
 
 
@@ -326,12 +428,21 @@ def mixing_ratio_from_vapour_pressure(
 
     Implementations
     ------------------------
-    :func:`mixing_ratio_from_vapour_pressure` calls one of the following implementations depending on the type of the input arguments:
+    :func:`mixing_ratio_from_vapour_pressure` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.mixing_ratio_from_vapour_pressure` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.mixing_ratio_from_vapour_pressure` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.mixing_ratio_from_vapour_pressure`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(mixing_ratio_from_vapour_pressure)(e, p, eps=eps)
+    dispatched = dispatch(mixing_ratio_from_vapour_pressure, fieldlist=False, array=True)
+    return dispatched(e, p, eps=eps)
+
+
+@overload
+def saturation_vapour_pressure(t: "ArrayLike", phase: str = "mixed") -> "ArrayLike": ...
 
 
 @overload
@@ -339,9 +450,9 @@ def saturation_vapour_pressure(t: "xarray.DataArray", phase: str = "mixed") -> "
 
 
 def saturation_vapour_pressure(
-    t: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
     phase: str = "mixed",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the saturation vapour pressure from temperature with respect to a phase.
 
     Parameters
@@ -363,7 +474,7 @@ def saturation_vapour_pressure(
 
     .. math::
 
-        e_{sat} = a_{1}\\;exp \\left(a_{3}\\frac{t-273.16}{t-a_{4}}\\right)
+        e_{sat} = a_{1}\operatorname{exp} \left(a_{3}\frac{t-273.16}{t-a_{4}}\right)
 
     where the parameters are set as follows:
 
@@ -374,23 +485,37 @@ def saturation_vapour_pressure(
 
     * if :math:`t <= t_{i}`: the formula for ``phase`` = \"ice\" is used (:math:`t_{i} = 250.16 K`)
     * if :math:`t >= t_{0}`: the formula for ``phase`` = \"water\" is used (:math:`t_{0} = 273.16 K`)
-    * for the range :math:`t_{i} < t < t_{0}` an interpolation is used between the \"ice\" and \"water\" phases:
+    * for the range :math:`t_{i} < t < t_{0}` an interpolation is used
+      between the \"ice\" and \"water\" phases:
 
     .. math::
 
-        \\alpha(t) e_{wsat}(t) + (1 - \\alpha(t)) e_{isat}(t)
+        \alpha(t) e_{wsat}(t) + (1 - \alpha(t)) e_{isat}(t)
 
-    with :math:`\\alpha(t) = (\\frac{t-t_{i}}{t_{0}-t_{i}})^2`.
+    with :math:`\alpha(t) = (\frac{t-t_{i}}{t_{0}-t_{i}})^2`.
 
 
     Implementations
     ------------------------
-    :func:`saturation_vapour_pressure` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_vapour_pressure` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_vapour_pressure` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_vapour_pressure` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_vapour_pressure`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_vapour_pressure)(t, phase=phase)
+    dispatched = dispatch(saturation_vapour_pressure, fieldlist=False, array=True)
+    return dispatched(t, phase=phase)
+
+
+@overload
+def saturation_mixing_ratio(
+    t: "ArrayLike",
+    p: "ArrayLike",
+    phase: str = "mixed",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -402,10 +527,10 @@ def saturation_mixing_ratio(
 
 
 def saturation_mixing_ratio(
-    t: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     phase: str = "mixed",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the saturation mixing ratio from temperature with respect to a phase.
 
     Parameters
@@ -434,12 +559,25 @@ def saturation_mixing_ratio(
 
     Implementations
     ------------------------
-    :func:`saturation_mixing_ratio` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_mixing_ratio` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_mixing_ratio` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_mixing_ratio` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_mixing_ratio`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_mixing_ratio)(t, p, phase=phase)
+    dispatched = dispatch(saturation_mixing_ratio, fieldlist=False, array=True)
+    return dispatched(t, p, phase=phase)
+
+
+@overload
+def saturation_specific_humidity(
+    t: "ArrayLike",
+    p: "ArrayLike",
+    phase: str = "mixed",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -451,10 +589,10 @@ def saturation_specific_humidity(
 
 
 def saturation_specific_humidity(
-    t: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     phase: str = "mixed",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the saturation specific humidity from temperature with respect to a phase.
 
     Parameters
@@ -483,12 +621,24 @@ def saturation_specific_humidity(
 
     Implementations
     ------------------------
-    :func:`saturation_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_specific_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_specific_humidity)(t, p, phase=phase)
+    dispatched = dispatch(saturation_specific_humidity, fieldlist=False, array=True)
+    return dispatched(t, p, phase=phase)
+
+
+@overload
+def saturation_vapour_pressure_slope(
+    t: "ArrayLike",
+    phase: str = "mixed",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -499,9 +649,9 @@ def saturation_vapour_pressure_slope(
 
 
 def saturation_vapour_pressure_slope(
-    t: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
     phase: str = "mixed",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the slope of saturation vapour pressure with respect to temperature.
 
     Parameters
@@ -521,12 +671,28 @@ def saturation_vapour_pressure_slope(
 
     Implementations
     ------------------------
-    :func:`saturation_vapour_pressure_slope` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_vapour_pressure_slope` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_vapour_pressure_slope` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_vapour_pressure_slope` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_vapour_pressure_slope`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_vapour_pressure_slope)(t, phase=phase)
+    dispatched = dispatch(saturation_vapour_pressure_slope, fieldlist=False, array=True)
+    return dispatched(t, phase=phase)
+
+
+@overload
+def saturation_mixing_ratio_slope(
+    t: "ArrayLike",
+    p: "ArrayLike",
+    es: "ArrayLike" | None = None,
+    es_slope: "ArrayLike" | None = None,
+    phase: str = "mixed",
+    eps: float = 1e-4,
+) -> "ArrayLike": ...
 
 
 @overload
@@ -541,13 +707,13 @@ def saturation_mixing_ratio_slope(
 
 
 def saturation_mixing_ratio_slope(
-    t: "xarray.DataArray",
-    p: "xarray.DataArray",
-    es: "xarray.DataArray" | None = None,
-    es_slope: "xarray.DataArray" | None = None,
+    t: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+    es: "ArrayLike" | "xarray.DataArray" | None = None,
+    es_slope: "ArrayLike" | "xarray.DataArray" | None = None,
     phase: str = "mixed",
     eps: float = 1e-4,
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the slope of saturation mixing ratio with respect to temperature.
 
     Parameters
@@ -577,29 +743,38 @@ def saturation_mixing_ratio_slope(
 
     .. math::
 
-        \\frac{\\partial w_{s}}{\\partial t} = \\frac{\\epsilon\\; p}{(p-e_{s})^{2}} \\frac{d e_{s}}{d t}
+        \frac{\partial w_{s}}{\partial t} = \frac{\epsilon p}{(p-e_{s})^{2}} \frac{d e_{s}}{d t}
 
     where
 
-        * :math:`\\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
+        * :math:`\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
         * :math:`e_{s}` is the :func:`saturation_vapour_pressure` for the given ``phase``
 
 
     Implementations
     ------------------------
-    :func:`saturation_mixing_ratio_slope` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_mixing_ratio_slope` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_mixing_ratio_slope` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_mixing_ratio_slope` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_mixing_ratio_slope`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_mixing_ratio_slope)(
-        t,
-        p,
-        es,
-        es_slope,
-        phase=phase,
-        eps=eps,
-    )
+    dispatched = dispatch(saturation_mixing_ratio_slope, fieldlist=False, array=True)
+    return dispatched(t, p, es, es_slope, phase=phase, eps=eps)
+
+
+@overload
+def saturation_specific_humidity_slope(
+    t: "ArrayLike",
+    p: "ArrayLike",
+    es: "ArrayLike" | None = None,
+    es_slope: "ArrayLike" | None = None,
+    phase: str = "mixed",
+    eps: float = 1e-4,
+) -> "ArrayLike": ...
 
 
 @overload
@@ -614,13 +789,13 @@ def saturation_specific_humidity_slope(
 
 
 def saturation_specific_humidity_slope(
-    t: "xarray.DataArray",
-    p: "xarray.DataArray",
-    es: "xarray.DataArray" | None = None,
-    es_slope: "xarray.DataArray" | None = None,
+    t: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+    es: "ArrayLike" | "xarray.DataArray" | None = None,
+    es_slope: "ArrayLike" | "xarray.DataArray" | None = None,
     phase: str = "mixed",
     eps: float = 1e-4,
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the slope of saturation specific humidity with respect to temperature.
 
     Parameters
@@ -650,30 +825,34 @@ def saturation_specific_humidity_slope(
 
     .. math::
 
-        \\frac{\\partial q_{s}}{\\partial t} =
-        \\frac{\\epsilon\\; p}{(p+e_{s}(\\epsilon - 1))^{2}} \\frac{d e_{s}}{d t}
+        \frac{\partial q_{s}}{\partial t} =
+        \frac{\epsilon p}{(p+e_{s}(\epsilon - 1))^{2}} \frac{d e_{s}}{d t}
 
     where
 
-        * :math:`\\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
+        * :math:`\epsilon = R_{d}/R_{v}` (see :data:`earthkit.meteo.constants.epsilon`).
         * :math:`e_{s}` is the :func:`saturation_vapour_pressure` for the given ``phase``
 
 
     Implementations
     ------------------------
-    :func:`saturation_specific_humidity_slope` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_specific_humidity_slope` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_specific_humidity_slope` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_specific_humidity_slope` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_specific_humidity_slope`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_specific_humidity_slope)(
-        t,
-        p,
-        es,
-        es_slope,
-        phase=phase,
-        eps=eps,
-    )
+    dispatched = dispatch(saturation_specific_humidity_slope, fieldlist=False, array=True)
+    return dispatched(t, p, es, es_slope, phase=phase, eps=eps)
+
+
+@overload
+def temperature_from_saturation_vapour_pressure(
+    es: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -683,8 +862,8 @@ def temperature_from_saturation_vapour_pressure(
 
 
 def temperature_from_saturation_vapour_pressure(
-    es: "xarray.DataArray",
-) -> "xarray.DataArray":
+    es: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the temperature from saturation vapour pressure.
 
     Parameters
@@ -705,12 +884,24 @@ def temperature_from_saturation_vapour_pressure(
 
     Implementations
     ------------------------
-    :func:`temperature_from_saturation_vapour_pressure` calls one of the following implementations depending on the type of the input arguments:
+    :func:`temperature_from_saturation_vapour_pressure` calls one of the
+    following implementations depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_from_saturation_vapour_pressure` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.temperature_from_saturation_vapour_pressure` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_from_saturation_vapour_pressure`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(temperature_from_saturation_vapour_pressure)(es)
+    dispatched = dispatch(temperature_from_saturation_vapour_pressure, fieldlist=False, array=True)
+    return dispatched(es)
+
+
+@overload
+def relative_humidity_from_dewpoint(
+    t: "ArrayLike",
+    td: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -721,9 +912,9 @@ def relative_humidity_from_dewpoint(
 
 
 def relative_humidity_from_dewpoint(
-    t: "xarray.DataArray",
-    td: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    td: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the relative humidity from dewpoint temperature.
 
     Parameters
@@ -743,19 +934,32 @@ def relative_humidity_from_dewpoint(
 
     .. math::
 
-        r = 100 \\frac {e_{wsat}(td)}{e_{wsat}(t)}
+        r = 100 \frac {e_{wsat}(td)}{e_{wsat}(t)}
 
     where :math:`e_{wsat}` is the :func:`saturation_vapour_pressure` over water.
 
 
     Implementations
     ------------------------
-    :func:`relative_humidity_from_dewpoint` calls one of the following implementations depending on the type of the input arguments:
+    :func:`relative_humidity_from_dewpoint` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.relative_humidity_from_dewpoint` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.relative_humidity_from_dewpoint` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.relative_humidity_from_dewpoint`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(relative_humidity_from_dewpoint)(t, td)
+    dispatched = dispatch(relative_humidity_from_dewpoint, fieldlist=False, array=True)
+    return dispatched(t, td)
+
+
+@overload
+def relative_humidity_from_specific_humidity(
+    t: "ArrayLike",
+    q: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -767,10 +971,10 @@ def relative_humidity_from_specific_humidity(
 
 
 def relative_humidity_from_specific_humidity(
-    t: "xarray.DataArray",
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the relative humidity from specific humidity.
 
     Parameters
@@ -792,7 +996,7 @@ def relative_humidity_from_specific_humidity(
 
     .. math::
 
-        r = 100 \\frac {e(q, p)}{e_{msat}(t)}
+        r = 100 \frac {e(q, p)}{e_{msat}(t)}
 
     where:
 
@@ -802,12 +1006,24 @@ def relative_humidity_from_specific_humidity(
 
     Implementations
     ------------------------
-    :func:`relative_humidity_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`relative_humidity_from_specific_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.relative_humidity_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.relative_humidity_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.relative_humidity_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(relative_humidity_from_specific_humidity)(t, q, p)
+    dispatched = dispatch(relative_humidity_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(t, q, p)
+
+
+@overload
+def specific_humidity_from_dewpoint(
+    td: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -818,9 +1034,9 @@ def specific_humidity_from_dewpoint(
 
 
 def specific_humidity_from_dewpoint(
-    td: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    td: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the specific humidity from dewpoint.
 
     Parameters
@@ -853,12 +1069,24 @@ def specific_humidity_from_dewpoint(
 
     Implementations
     ------------------------
-    :func:`specific_humidity_from_dewpoint` calls one of the following implementations depending on the type of the input arguments:
+    :func:`specific_humidity_from_dewpoint` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_dewpoint` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.specific_humidity_from_dewpoint` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_dewpoint`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(specific_humidity_from_dewpoint)(td, p)
+    dispatched = dispatch(specific_humidity_from_dewpoint, fieldlist=False, array=True)
+    return dispatched(td, p)
+
+
+@overload
+def mixing_ratio_from_dewpoint(
+    td: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -869,9 +1097,9 @@ def mixing_ratio_from_dewpoint(
 
 
 def mixing_ratio_from_dewpoint(
-    td: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    td: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the mixing ratio from dewpoint.
 
     Parameters
@@ -904,12 +1132,25 @@ def mixing_ratio_from_dewpoint(
 
     Implementations
     ------------------------
-    :func:`mixing_ratio_from_dewpoint` calls one of the following implementations depending on the type of the input arguments:
+    :func:`mixing_ratio_from_dewpoint` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.mixing_ratio_from_dewpoint` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.mixing_ratio_from_dewpoint` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.mixing_ratio_from_dewpoint`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(mixing_ratio_from_dewpoint)(td, p)
+    dispatched = dispatch(mixing_ratio_from_dewpoint, fieldlist=False, array=True)
+    return dispatched(td, p)
+
+
+@overload
+def specific_humidity_from_relative_humidity(
+    t: "ArrayLike",
+    r: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -921,10 +1162,10 @@ def specific_humidity_from_relative_humidity(
 
 
 def specific_humidity_from_relative_humidity(
-    t: "xarray.DataArray",
-    r: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    r: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the specific humidity from relative_humidity.
 
     Parameters
@@ -946,7 +1187,7 @@ def specific_humidity_from_relative_humidity(
 
     .. math::
 
-        e(q, p) = r\; \frac{e_{msat}(t)}{100}
+        e(q, p) = r \frac{e_{msat}(t)}{100}
 
     where:
 
@@ -959,12 +1200,24 @@ def specific_humidity_from_relative_humidity(
 
     Implementations
     ------------------------
-    :func:`specific_humidity_from_relative_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`specific_humidity_from_relative_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_relative_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.specific_humidity_from_relative_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.specific_humidity_from_relative_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(specific_humidity_from_relative_humidity)(t, r, p)
+    dispatched = dispatch(specific_humidity_from_relative_humidity, fieldlist=False, array=True)
+    return dispatched(t, r, p)
+
+
+@overload
+def dewpoint_from_relative_humidity(
+    t: "ArrayLike",
+    r: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -975,9 +1228,9 @@ def dewpoint_from_relative_humidity(
 
 
 def dewpoint_from_relative_humidity(
-    t: "xarray.DataArray",
-    r: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    r: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the dewpoint temperature from relative humidity.
 
     Parameters
@@ -998,7 +1251,7 @@ def dewpoint_from_relative_humidity(
 
     .. math::
 
-        e_{wsat}(td) = \frac{r\; e_{wsat}(t)}{100}
+        e_{wsat}(td) = \frac{r e_{wsat}(t)}{100}
 
     where:
 
@@ -1011,12 +1264,24 @@ def dewpoint_from_relative_humidity(
 
     Implementations
     ------------------------
-    :func:`dewpoint_from_relative_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`dewpoint_from_relative_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.dewpoint_from_relative_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.dewpoint_from_relative_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.dewpoint_from_relative_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(dewpoint_from_relative_humidity)(t, r)
+    dispatched = dispatch(dewpoint_from_relative_humidity, fieldlist=False, array=True)
+    return dispatched(t, r)
+
+
+@overload
+def dewpoint_from_specific_humidity(
+    q: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1027,9 +1292,9 @@ def dewpoint_from_specific_humidity(
 
 
 def dewpoint_from_specific_humidity(
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the dewpoint temperature from specific humidity.
 
     Parameters
@@ -1064,12 +1329,24 @@ def dewpoint_from_specific_humidity(
 
     Implementations
     ------------------------
-    :func:`dewpoint_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`dewpoint_from_specific_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.dewpoint_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.dewpoint_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.dewpoint_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(dewpoint_from_specific_humidity)(q, p)
+    dispatched = dispatch(dewpoint_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(q, p)
+
+
+@overload
+def virtual_temperature(
+    t: "ArrayLike",
+    q: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1080,9 +1357,9 @@ def virtual_temperature(
 
 
 def virtual_temperature(
-    t: "xarray.DataArray",
-    q: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    q: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the virtual temperature from temperature and specific humidity.
 
     Parameters
@@ -1109,12 +1386,25 @@ def virtual_temperature(
 
     Implementations
     ------------------------
-    :func:`virtual_temperature` calls one of the following implementations depending on the type of the input arguments:
+    :func:`virtual_temperature` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.virtual_temperature` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.virtual_temperature` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.virtual_temperature`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(virtual_temperature)(t, q)
+    dispatched = dispatch(virtual_temperature, fieldlist=False, array=True)
+    return dispatched(t, q)
+
+
+@overload
+def virtual_potential_temperature(
+    t: "ArrayLike",
+    q: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1126,10 +1416,10 @@ def virtual_potential_temperature(
 
 
 def virtual_potential_temperature(
-    t: "xarray.DataArray",
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the virtual potential temperature from temperature and specific humidity.
 
     Parameters
@@ -1161,12 +1451,24 @@ def virtual_potential_temperature(
 
     Implementations
     ------------------------
-    :func:`virtual_potential_temperature` calls one of the following implementations depending on the type of the input arguments:
+    :func:`virtual_potential_temperature` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.virtual_potential_temperature` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.virtual_potential_temperature` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.virtual_potential_temperature`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(virtual_potential_temperature)(t, q, p)
+    dispatched = dispatch(virtual_potential_temperature, fieldlist=False, array=True)
+    return dispatched(t, q, p)
+
+
+@overload
+def potential_temperature(
+    t: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1177,9 +1479,9 @@ def potential_temperature(
 
 
 def potential_temperature(
-    t: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the potential temperature.
 
     Parameters
@@ -1206,12 +1508,24 @@ def potential_temperature(
 
     Implementations
     ------------------------
-    :func:`potential_temperature` calls one of the following implementations depending on the type of the input arguments:
+    :func:`potential_temperature` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.potential_temperature` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.potential_temperature` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.potential_temperature`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(potential_temperature)(t, p)
+    dispatched = dispatch(potential_temperature, fieldlist=False, array=True)
+    return dispatched(t, p)
+
+
+@overload
+def temperature_from_potential_temperature(
+    th: "ArrayLike",
+    p: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1222,9 +1536,9 @@ def temperature_from_potential_temperature(
 
 
 def temperature_from_potential_temperature(
-    th: "xarray.DataArray",
-    p: "xarray.DataArray",
-) -> "xarray.DataArray":
+    th: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the temperature from potential temperature.
 
     Parameters
@@ -1251,12 +1565,25 @@ def temperature_from_potential_temperature(
 
     Implementations
     ------------------------
-    :func:`temperature_from_potential_temperature` calls one of the following implementations depending on the type of the input arguments:
+    :func:`temperature_from_potential_temperature` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_from_potential_temperature` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.temperature_from_potential_temperature` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_from_potential_temperature`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(temperature_from_potential_temperature)(th, p)
+    dispatched = dispatch(temperature_from_potential_temperature, fieldlist=False, array=True)
+    return dispatched(th, p)
+
+
+@overload
+def pressure_on_dry_adiabat(
+    t: "ArrayLike",
+    t_def: "ArrayLike",
+    p_def: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1268,10 +1595,10 @@ def pressure_on_dry_adiabat(
 
 
 def pressure_on_dry_adiabat(
-    t: "xarray.DataArray",
-    t_def: "xarray.DataArray",
-    p_def: "xarray.DataArray",
-) -> "xarray.DataArray":
+    t: "ArrayLike" | "xarray.DataArray",
+    t_def: "ArrayLike" | "xarray.DataArray",
+    p_def: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the pressure on a dry adiabat.
 
     Parameters
@@ -1300,12 +1627,25 @@ def pressure_on_dry_adiabat(
 
     Implementations
     ------------------------
-    :func:`pressure_on_dry_adiabat` calls one of the following implementations depending on the type of the input arguments:
+    :func:`pressure_on_dry_adiabat` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.pressure_on_dry_adiabat` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.pressure_on_dry_adiabat` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.pressure_on_dry_adiabat`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(pressure_on_dry_adiabat)(t, t_def, p_def)
+    dispatched = dispatch(pressure_on_dry_adiabat, fieldlist=False, array=True)
+    return dispatched(t, t_def, p_def)
+
+
+@overload
+def temperature_on_dry_adiabat(
+    p: "ArrayLike",
+    t_def: "ArrayLike",
+    p_def: "ArrayLike",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1317,10 +1657,10 @@ def temperature_on_dry_adiabat(
 
 
 def temperature_on_dry_adiabat(
-    p: "xarray.DataArray",
-    t_def: "xarray.DataArray",
-    p_def: "xarray.DataArray",
-) -> "xarray.DataArray":
+    p: "ArrayLike" | "xarray.DataArray",
+    t_def: "ArrayLike" | "xarray.DataArray",
+    p_def: "ArrayLike" | "xarray.DataArray",
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the temperature on a dry adiabat.
 
     Parameters
@@ -1349,12 +1689,25 @@ def temperature_on_dry_adiabat(
 
     Implementations
     ------------------------
-    :func:`temperature_on_dry_adiabat` calls one of the following implementations depending on the type of the input arguments:
+    :func:`temperature_on_dry_adiabat` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_on_dry_adiabat` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.temperature_on_dry_adiabat` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_on_dry_adiabat`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(temperature_on_dry_adiabat)(p, t_def, p_def)
+    dispatched = dispatch(temperature_on_dry_adiabat, fieldlist=False, array=True)
+    return dispatched(p, t_def, p_def)
+
+
+@overload
+def lcl_temperature(
+    t: "ArrayLike",
+    td: "ArrayLike",
+    method: str = "davies",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1366,10 +1719,10 @@ def lcl_temperature(
 
 
 def lcl_temperature(
-    t: "xarray.DataArray",
-    td: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    td: "ArrayLike" | "xarray.DataArray",
     method: str = "davies",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the Lifting Condenstaion Level (LCL) temperature from dewpoint.
 
     Parameters
@@ -1393,8 +1746,7 @@ def lcl_temperature(
 
         .. math::
 
-            t_{LCL} =
-            td - (0.212 + 1.571\\times 10^{-3} (td - t_{0}) - 4.36\\times 10^{-4} (t - t_{0})) (t - td)
+            t_{LCL} = td - (0.212 + 1.571\times 10^{-3} (td - t_{0}) - 4.36\times 10^{-4} (t - t_{0})) (t - td)
 
       where :math:`t_{0}` is the triple point of water (see :data:`earthkit.meteo.constants.T0`).
 
@@ -1402,17 +1754,31 @@ def lcl_temperature(
 
         .. math::
 
-            t_{LCL} = 56.0 +  \\frac{1}{\\frac{1}{td - 56} + \\frac{log(\\frac{t}{td})}{800}}
+            t_{LCL} = 56.0 +  \frac{1}{\frac{1}{td - 56} + \frac{log(\frac{t}{td})}{800}}
 
 
     Implementations
     ------------------------
-    :func:`lcl_temperature` calls one of the following implementations depending on the type of the input arguments:
+    :func:`lcl_temperature` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.lcl_temperature` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.lcl_temperature` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.lcl_temperature`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(lcl_temperature)(t, td, method=method)
+    dispatched = dispatch(lcl_temperature, fieldlist=False, array=True)
+    return dispatched(t, td, method=method)
+
+
+@overload
+def lcl(
+    t: "ArrayLike",
+    td: "ArrayLike",
+    p: "ArrayLike",
+    method: str = "davies",
+) -> tuple["ArrayLike", "ArrayLike"]: ...
 
 
 @overload
@@ -1425,11 +1791,11 @@ def lcl(
 
 
 def lcl(
-    t: "xarray.DataArray",
-    td: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    td: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     method: str = "davies",
-) -> tuple["xarray.DataArray", "xarray.DataArray"]:
+) -> tuple["ArrayLike" | "xarray.DataArray", "ArrayLike" | "xarray.DataArray"]:
     r"""Compute the temperature and pressure of the Lifting Condenstaion Level (LCL) from dewpoint.
 
     Parameters
@@ -1458,12 +1824,26 @@ def lcl(
 
     Implementations
     ------------------------
-    :func:`lcl` calls one of the following implementations depending on the type of the input arguments:
+    :func:`lcl` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.lcl` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.lcl` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.lcl`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(lcl)(t, td, p, method=method)
+    dispatched = dispatch(lcl, fieldlist=False, array=True)
+    return dispatched(t, td, p, method=method)
+
+
+@overload
+def ept_from_dewpoint(
+    t: "ArrayLike",
+    td: "ArrayLike",
+    p: "ArrayLike",
+    method: str = "ifs",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1476,11 +1856,11 @@ def ept_from_dewpoint(
 
 
 def ept_from_dewpoint(
-    t: "xarray.DataArray",
-    td: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    td: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     method: str = "ifs",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the equivalent potential temperature from dewpoint.
 
     Parameters
@@ -1506,25 +1886,24 @@ def ept_from_dewpoint(
 
         .. math::
 
-            \\Theta_{e} = \\Theta\\; exp(\\frac{L_{v}\\; q}{c_{pd}\\; t_{LCL}})
+            \Theta_{e} = \Theta \operatorname{exp}(\frac{L_{v} q}{c_{pd} t_{LCL}})
 
     * "bolton35": Eq (35) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} = \\Theta (\\frac{10^{5}}{p})^{\\kappa 0.28 w} exp(\\frac{2675 w}{t_{LCL}})
+            \Theta_{e} = \Theta (\frac{10^{5}}{p})^{\kappa 0.28 w} \operatorname{exp}(\frac{2675 w}{t_{LCL}})
 
     * "bolton39": Eq (39) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} =
-            t (\\frac{10^{5}}{p-e})^{\\kappa} (\\frac{t}{t_{LCL}})^{0.28 w} exp[(\\frac{3036}{t_{LCL}} -
-            1.78)w(1+0.448\\; w)]
+            \Theta_{e} = t (\frac{10^{5}}{p-e})^{\kappa} (\frac{t}{t_{LCL}})^{0.28 w} \operatorname{exp}[(\frac{3036}{t_{LCL}} -
+            1.78)w(1+0.448 w)]
 
     where:
 
-        * :math:`\\Theta` is the :func:`potential_temperature`
+        * :math:`\Theta` is the :func:`potential_temperature`
         * :math:`t_{LCL}` is the temperature at the Lifting Condestation Level computed
           with :func:`lcl_temperature` using option:
 
@@ -1537,17 +1916,31 @@ def ept_from_dewpoint(
           (see :data:`earthkit.meteo.constants.Lv`)
         * :math:`c_{pd}` is the specific heat of dry air on constant pressure
           (see :data:`earthkit.meteo.constants.c_pd`)
-        * :math:`\\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`)
+        * :math:`\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`)
 
 
     Implementations
     ------------------------
-    :func:`ept_from_dewpoint` calls one of the following implementations depending on the type of the input arguments:
+    :func:`ept_from_dewpoint` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.ept_from_dewpoint` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.ept_from_dewpoint` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.ept_from_dewpoint`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(ept_from_dewpoint)(t, td, p, method=method)
+    dispatched = dispatch(ept_from_dewpoint, fieldlist=False, array=True)
+    return dispatched(t, td, p, method=method)
+
+
+@overload
+def ept_from_specific_humidity(
+    t: "ArrayLike",
+    q: "ArrayLike",
+    p: "ArrayLike",
+    method: str = "ifs",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1560,11 +1953,11 @@ def ept_from_specific_humidity(
 
 
 def ept_from_specific_humidity(
-    t: "xarray.DataArray",
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     method: str = "ifs",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the equivalent potential temperature from specific humidity.
 
     Parameters
@@ -1591,12 +1984,25 @@ def ept_from_specific_humidity(
 
     Implementations
     ------------------------
-    :func:`ept_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`ept_from_specific_humidity` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.ept_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.ept_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.ept_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(ept_from_specific_humidity)(t, q, p, method=method)
+    dispatched = dispatch(ept_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(t, q, p, method=method)
+
+
+@overload
+def saturation_ept(
+    t: "ArrayLike",
+    p: "ArrayLike",
+    method: str = "ifs",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1608,10 +2014,10 @@ def saturation_ept(
 
 
 def saturation_ept(
-    t: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     method: str = "ifs",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the saturation equivalent potential temperature.
 
     Parameters
@@ -1636,24 +2042,23 @@ def saturation_ept(
 
         .. math::
 
-            \\Theta_{esat} = \\Theta\\; exp(\\frac{L_{v}\\; q_{sat}}{c_{pd}\\; t})
+            \Theta_{esat} = \Theta \operatorname{exp}(\frac{L_{v} q_{sat}}{c_{pd} t})
 
     * "bolton35": Eq (35) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} = \\Theta (\\frac{10^{5}}{p})^{\\kappa 0.28 w_{sat}}\\; exp(\\frac{2675\\; w_{sat}}{t})
+            \Theta_{e} = \Theta (\frac{10^{5}}{p})^{\kappa 0.28 w_{sat}} \operatorname{exp}(\frac{2675 w_{sat}}{t})
 
     * "bolton39": Eq (39) from [Bolton1980]_ is used:
 
         .. math::
 
-            \\Theta_{e} =
-            t (\\frac{10^{5}}{p-e_{sat}})^{\\kappa} exp[(\\frac{3036}{t} - 1.78)w_{sat}(1+0.448\\; w_{sat})]
+            \Theta_{e} = t (\frac{10^{5}}{p-e_{sat}})^{\kappa} \operatorname{exp}[(\frac{3036}{t} - 1.78)w_{sat}(1+0.448 w_{sat})]
 
     where:
 
-        * :math:`\\Theta` is the :func:`potential_temperature`
+        * :math:`\Theta` is the :func:`potential_temperature`
         * :math:`e_{sat}` is the :func:`saturation_vapor_pressure`
         * :math:`q_{sat}` is the :func:`saturation_specific_humidity`
         * :math:`w_{sat}` is the :func:`saturation_mixing_ratio`
@@ -1664,12 +2069,26 @@ def saturation_ept(
 
     Implementations
     ------------------------
-    :func:`saturation_ept` calls one of the following implementations depending on the type of the input arguments:
+    :func:`saturation_ept` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_ept` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.saturation_ept` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.saturation_ept`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(saturation_ept)(t, p, method=method)
+    dispatched = dispatch(saturation_ept, fieldlist=False, array=True)
+    return dispatched(t, p, method=method)
+
+
+@overload
+def temperature_on_moist_adiabat(
+    ept: "ArrayLike",
+    p: "ArrayLike",
+    ept_method: str = "ifs",
+    t_method: str = "bisect",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1682,11 +2101,11 @@ def temperature_on_moist_adiabat(
 
 
 def temperature_on_moist_adiabat(
-    ept: "xarray.DataArray",
-    p: "xarray.DataArray",
+    ept: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     ept_method: str = "ifs",
     t_method: str = "bisect",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the temperature on a moist adiabat (pseudoadiabat)
 
     Parameters
@@ -1719,12 +2138,27 @@ def temperature_on_moist_adiabat(
 
     Implementations
     ------------------------
-    :func:`temperature_on_moist_adiabat` calls one of the following implementations depending on the type of the input arguments:
+    :func:`temperature_on_moist_adiabat` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_on_moist_adiabat` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.temperature_on_moist_adiabat` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.temperature_on_moist_adiabat`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(temperature_on_moist_adiabat)(ept, p, ept_method=ept_method, t_method=t_method)
+    dispatched = dispatch(temperature_on_moist_adiabat, fieldlist=False, array=True)
+    return dispatched(ept, p, ept_method=ept_method, t_method=t_method)
+
+
+@overload
+def wet_bulb_temperature_from_dewpoint(
+    t: "ArrayLike",
+    td: "ArrayLike",
+    p: "ArrayLike",
+    ept_method: str = "ifs",
+    t_method: str = "bisect",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1738,12 +2172,12 @@ def wet_bulb_temperature_from_dewpoint(
 
 
 def wet_bulb_temperature_from_dewpoint(
-    t: "xarray.DataArray",
-    td: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    td: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     ept_method: str = "ifs",
     t_method: str = "bisect",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the pseudo adiabatic wet bulb temperature from dewpoint.
 
     Parameters
@@ -1781,12 +2215,27 @@ def wet_bulb_temperature_from_dewpoint(
 
     Implementations
     ------------------------
-    :func:`wet_bulb_temperature_from_dewpoint` calls one of the following implementations depending on the type of the input arguments:
+    :func:`wet_bulb_temperature_from_dewpoint` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_temperature_from_dewpoint` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.wet_bulb_temperature_from_dewpoint` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_temperature_from_dewpoint`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(wet_bulb_temperature_from_dewpoint)(t, td, p, ept_method=ept_method, t_method=t_method)
+    dispatched = dispatch(wet_bulb_temperature_from_dewpoint, fieldlist=False, array=True)
+    return dispatched(t, td, p, ept_method=ept_method, t_method=t_method)
+
+
+@overload
+def wet_bulb_temperature_from_specific_humidity(
+    t: "ArrayLike",
+    q: "ArrayLike",
+    p: "ArrayLike",
+    ept_method: str = "ifs",
+    t_method: str = "bisect",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1800,12 +2249,12 @@ def wet_bulb_temperature_from_specific_humidity(
 
 
 def wet_bulb_temperature_from_specific_humidity(
-    t: "xarray.DataArray",
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     ept_method: str = "ifs",
     t_method: str = "bisect",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the pseudo adiabatic wet bulb temperature from specific humidity.
 
     Parameters
@@ -1844,18 +2293,27 @@ def wet_bulb_temperature_from_specific_humidity(
 
     Implementations
     ------------------------
-    :func:`wet_bulb_temperature_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`wet_bulb_temperature_from_specific_humidity` calls one of the
+    following implementations depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_temperature_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.wet_bulb_temperature_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_temperature_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(wet_bulb_temperature_from_specific_humidity)(
-        t,
-        q,
-        p,
-        ept_method=ept_method,
-        t_method=t_method,
-    )
+    dispatched = dispatch(wet_bulb_temperature_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(t, q, p, ept_method=ept_method, t_method=t_method)
+
+
+@overload
+def wet_bulb_potential_temperature_from_dewpoint(
+    t: "ArrayLike",
+    td: "ArrayLike",
+    p: "ArrayLike",
+    ept_method: str = "ifs",
+    t_method: str = "direct",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1869,12 +2327,12 @@ def wet_bulb_potential_temperature_from_dewpoint(
 
 
 def wet_bulb_potential_temperature_from_dewpoint(
-    t: "xarray.DataArray",
-    td: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    td: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     ept_method: str = "ifs",
     t_method: str = "direct",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the pseudo adiabatic wet bulb potential temperature from dewpoint.
 
     Parameters
@@ -1913,18 +2371,27 @@ def wet_bulb_potential_temperature_from_dewpoint(
 
     Implementations
     ------------------------
-    :func:`wet_bulb_potential_temperature_from_dewpoint` calls one of the following implementations depending on the type of the input arguments:
+    :func:`wet_bulb_potential_temperature_from_dewpoint` calls one of the
+    following implementations depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_potential_temperature_from_dewpoint` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.wet_bulb_potential_temperature_from_dewpoint` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_potential_temperature_from_dewpoint`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(wet_bulb_potential_temperature_from_dewpoint)(
-        t,
-        td,
-        p,
-        ept_method=ept_method,
-        t_method=t_method,
-    )
+    dispatched = dispatch(wet_bulb_potential_temperature_from_dewpoint, fieldlist=False, array=True)
+    return dispatched(t, td, p, ept_method=ept_method, t_method=t_method)
+
+
+@overload
+def wet_bulb_potential_temperature_from_specific_humidity(
+    t: "ArrayLike",
+    q: "ArrayLike",
+    p: "ArrayLike",
+    ept_method: str = "ifs",
+    t_method: str = "direct",
+) -> "ArrayLike": ...
 
 
 @overload
@@ -1938,12 +2405,12 @@ def wet_bulb_potential_temperature_from_specific_humidity(
 
 
 def wet_bulb_potential_temperature_from_specific_humidity(
-    t: "xarray.DataArray",
-    q: "xarray.DataArray",
-    p: "xarray.DataArray",
+    t: "ArrayLike" | "xarray.DataArray",
+    q: "ArrayLike" | "xarray.DataArray",
+    p: "ArrayLike" | "xarray.DataArray",
     ept_method: str = "ifs",
     t_method: str = "direct",
-) -> "xarray.DataArray":
+) -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the pseudo adiabatic wet bulb potential temperature from specific humidity.
 
     Parameters
@@ -1979,25 +2446,28 @@ def wet_bulb_potential_temperature_from_specific_humidity(
 
     Implementations
     ------------------------
-    :func:`wet_bulb_potential_temperature_from_specific_humidity` calls one of the following implementations depending on the type of the input arguments:
+    :func:`wet_bulb_potential_temperature_from_specific_humidity` calls one of
+    the following implementations depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_potential_temperature_from_specific_humidity` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.wet_bulb_potential_temperature_from_specific_humidity` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.wet_bulb_potential_temperature_from_specific_humidity`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(wet_bulb_potential_temperature_from_specific_humidity)(
-        t,
-        q,
-        p,
-        ept_method=ept_method,
-        t_method=t_method,
-    )
+    dispatched = dispatch(wet_bulb_potential_temperature_from_specific_humidity, fieldlist=False, array=True)
+    return dispatched(t, q, p, ept_method=ept_method, t_method=t_method)
+
+
+@overload
+def specific_gas_constant(q: "ArrayLike") -> "ArrayLike": ...
 
 
 @overload
 def specific_gas_constant(q: "xarray.DataArray") -> "xarray.DataArray": ...
 
 
-def specific_gas_constant(q: "xarray.DataArray") -> "xarray.DataArray":
+def specific_gas_constant(q: "ArrayLike" | "xarray.DataArray") -> "ArrayLike" | "xarray.DataArray":
     r"""Compute the specific gas constant of moist air.
 
     Specific content of cloud particles and hydrometeors are neglected.
@@ -2027,9 +2497,14 @@ def specific_gas_constant(q: "xarray.DataArray") -> "xarray.DataArray":
 
     Implementations
     ------------------------
-    :func:`specific_gas_constant` calls one of the following implementations depending on the type of the input arguments:
+    :func:`specific_gas_constant` calls one of the following implementations depending on
+    the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.thermo.xarray.specific_gas_constant` for xarray.DataArray
+    - :py:meth:`earthkit.meteo.thermo.array.specific_gas_constant` for array-like
+    - :py:meth:`earthkit.meteo.thermo.xarray.specific_gas_constant`
+      for xarray.DataArray
 
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(specific_gas_constant)(q)
+    dispatched = dispatch(specific_gas_constant, fieldlist=False, array=True)
+    return dispatched(q)

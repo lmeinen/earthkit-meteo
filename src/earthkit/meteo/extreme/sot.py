@@ -7,6 +7,8 @@
 # nor does it submit to any jurisdiction.
 #
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import TypeAlias
@@ -26,8 +28,8 @@ def sot(
     ens: "ArrayLike",
     perc: int,
     eps: float = -1e4,
-    clim_dim: int | None = 0,
-    ens_dim: int | None = 0,
+    clim_dim: int | None = None,
+    ens_dim: int | None = None,
 ) -> "ArrayLike": ...
 
 
@@ -56,9 +58,9 @@ def sot(
 
     Parameters
     ----------
-    clim: xarray.DataArray
+    clim: array-like or xarray.DataArray
         Model climatology (percentiles). The reduction dimension is set by ``clim_dim``.
-    ens: xarray.DataArrays
+    ens: array-like or xarray.DataArray
         Ensemble forecast. The reduction dimension is set by ``ens_dim``.
     perc: int
         Percentile value (typically 10 or 90)
@@ -71,7 +73,7 @@ def sot(
 
     Returns
     -------
-    xarray.DataArray
+    array-like or xarray.DataArray
         SOT values.
 
 
@@ -79,12 +81,13 @@ def sot(
     ------------------------
     :func:`sot` calls one of the following implementations depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.extreme.xarray.sot` for xarray.DataArray
     - :py:meth:`earthkit.meteo.extreme.array.sot` for array-like
+    - :py:meth:`earthkit.meteo.extreme.xarray.sot` for xarray.DataArray
 
     The function returns an object of the same type as the input arguments.
     """
-    return dispatch(sot, array=True)(clim, ens, perc, eps=eps, clim_dim=clim_dim, ens_dim=ens_dim)
+    dispatched = dispatch(sot, array=True)
+    return dispatched(clim, ens, perc, eps=eps, clim_dim=clim_dim, ens_dim=ens_dim)
 
 
 @overload
@@ -93,8 +96,8 @@ def sot_unsorted(
     ens: "ArrayLike",
     perc: int,
     eps: float = -1e4,
-    clim_dim: int | None = 0,
-    ens_dim: int | None = 0,
+    clim_dim: int | None = None,
+    ens_dim: int | None = None,
 ) -> "ArrayLike": ...
 
 
@@ -123,9 +126,9 @@ def sot_unsorted(
 
     Parameters
     ----------
-    clim: xarray.DataArray
+    clim: array-like or xarray.DataArray
         Model climatology (percentiles). The reduction dimension is set by ``clim_dim``.
-    ens: xarray.DataArray
+    ens: array-like or xarray.DataArray
         Ensemble forecast. The reduction dimension is set by ``ens_dim``.
     perc: int
         Percentile value (typically 10 or 90)
@@ -138,7 +141,7 @@ def sot_unsorted(
 
     Returns
     -------
-    xarray.DataArray
+    array-like or xarray.DataArray
         SOT values.
 
 
@@ -147,9 +150,10 @@ def sot_unsorted(
     :func:`sot_unsorted` calls one of the following implementations depending on
     the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.extreme.xarray.sot_unsorted` for xarray.DataArray
     - :py:meth:`earthkit.meteo.extreme.array.sot_unsorted` for array-like
+    - :py:meth:`earthkit.meteo.extreme.xarray.sot_unsorted` for xarray.DataArray
 
     The function returns an object of the same type as the input arguments.
     """
-    return dispatch(sot_unsorted, array=True)(clim, ens, perc, eps=eps, clim_dim=clim_dim, ens_dim=ens_dim)
+    dispatched = dispatch(sot_unsorted, array=True)
+    return dispatched(clim, ens, perc, eps=eps, clim_dim=clim_dim, ens_dim=ens_dim)

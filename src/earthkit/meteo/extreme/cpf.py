@@ -7,6 +7,8 @@
 # nor does it submit to any jurisdiction.
 #
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import TypeAlias
@@ -29,8 +31,8 @@ def cpf(
     epsilon: float | None = None,
     symmetric: bool = False,
     from_zero: bool = False,
-    clim_dim: int | None = 0,
-    ens_dim: int | None = 0,
+    clim_dim: int | None = None,
+    ens_dim: int | None = None,
 ) -> "ArrayLike": ...
 
 
@@ -43,8 +45,8 @@ def cpf(
     epsilon: float | None = None,
     symmetric: bool = False,
     from_zero: bool = False,
-    clim_dim: str | int | None = None,
-    ens_dim: str | int | None = None,
+    clim_dim: str | None = None,
+    ens_dim: str | None = None,
 ) -> "xarray.DataArray": ...
 
 
@@ -56,8 +58,8 @@ def cpf(
     epsilon: float | None = None,
     symmetric: bool = False,
     from_zero: bool = False,
-    clim_dim: str | None = None,
-    ens_dim: str | None = None,
+    clim_dim: str | int | None = None,
+    ens_dim: str | int | None = None,
 ):
     r"""Compute Crossing Point Forecast (CPF).
 
@@ -65,9 +67,9 @@ def cpf(
 
     Parameters
     ----------
-    clim: xarray.DataArray
+    clim: array-like or xarray.DataArray
         Per-point climatology. The reduction dimension (quantiles) is set by ``clim_dim``.
-    ens: xarray.DataArray
+    ens: array-like or xarray.DataArray
         Ensemble forecast. The reduction dimension (ensemble members) is set by ``ens_dim``.
     sort_clim: bool
         If True, sort the climatology first
@@ -89,7 +91,7 @@ def cpf(
 
     Returns
     -------
-    xarray.DataArray
+    array-like or xarray.DataArray
         CPF values.
 
 
@@ -97,12 +99,13 @@ def cpf(
     ------------------------
     :func:`cpf` calls one of the following implementations depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.extreme.xarray.cpf` for xarray.DataArray
     - :py:meth:`earthkit.meteo.extreme.array.cpf` for array-like
+    - :py:meth:`earthkit.meteo.extreme.xarray.cpf` for xarray.DataArray
 
     The function returns an object of the same type as the input arguments.
     """
-    return dispatch(cpf, array=True)(
+    dispatched = dispatch(cpf, array=True)
+    return dispatched(
         clim,
         ens,
         sort_clim=sort_clim,

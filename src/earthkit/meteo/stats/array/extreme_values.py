@@ -7,12 +7,9 @@
 # nor does it submit to any jurisdiction.
 #
 
-from earthkit.utils.array import array_namespace
+from __future__ import annotations
 
-try:
-    from scipy.stats import lmoment
-except ImportError:
-    from ._polyfill import lmoment
+from earthkit.utils.array import array_namespace
 
 
 def _expand_dims_after(arr, ndim, xp=None):
@@ -103,7 +100,7 @@ class GumbelDistribution:
         return self.mu - self.sigma * xp.log(-xp.log(1.0 - p))
 
 
-def fit_gumbel(sample, over=0, **kwargs):
+def fit_gumbel(sample, dim=0, **kwargs):
     """Gumbel distribution with parameters fitted to a sample of values.
 
     .. warning:: Experimental API. This function may change or be removed without notice.
@@ -111,14 +108,12 @@ def fit_gumbel(sample, over=0, **kwargs):
     Results derived from the fitted distribution will only be meaningful
     if it is representative of the sample statistics.
 
-    Fitting over axes other than 0 is only possible if scipy is installed.
-
     Parameters
     ----------
     sample: numpy.ndarray
         Sample values.
-    over: int
-        The axis along which to compute the distribution parameters.
+    dim: int, optional
+        Dimension index along which to compute the distribution parameters.
     **kwargs: dict[str,Any]
         Keyword arguments forwarded to the distribution constructor.
 
@@ -128,8 +123,11 @@ def fit_gumbel(sample, over=0, **kwargs):
         Fitting over a dimension of a multi-dimensional sample array, the
         outcome is a collection of (scalar-valued) distributions.
     """
+    # Import lazily so tests can be collected and skipped when scipy is absent.
+    from scipy.stats import lmoment
+
     xp = array_namespace(sample)
-    lmom = lmoment(sample, axis=over, order=[1, 2])
+    lmom = lmoment(sample, axis=dim, order=[1, 2])
     sigma = lmom[1] / xp.log(2)
     mu = lmom[0] - sigma * 0.5772
     return GumbelDistribution(mu, sigma, **kwargs)

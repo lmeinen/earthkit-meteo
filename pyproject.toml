@@ -1,29 +1,31 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = [ "setuptools>=61", "setuptools-scm>=8", "wheel" ]
+requires = [ "setuptools>=77", "setuptools-scm>=8" ]
 
 [project]
 name = "earthkit-meteo"
-description = "Meteorological computations"
+description = "A Python library for meteorological computations"
 readme = "README.md"
-license = { text = "Apache License Version 2.0" }
+license = "Apache-2.0"
+license-files = [ "LICENSE" ]
 authors = [
   { name = "European Centre for Medium-Range Weather Forecasts (ECMWF)", email = "software.support@ecmwf.int" },
 ]
 requires-python = ">=3.10"
-
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: Apache Software License",
+  "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Scientific/Engineering",
 ]
 dynamic = [ "version" ]
 dependencies = [
@@ -32,20 +34,25 @@ dependencies = [
   "numpy",
 ]
 optional-dependencies.all = [
-  "earthkit-meteo[samples,scores]",
+  "earthkit-meteo[samples,scores,stats]",
 ]
 optional-dependencies.dev = [
   "earthkit-meteo[all,docs,test]",
 ]
 optional-dependencies.docs = [
+  "docutils",
+  "furo",
+  "ipykernel",
+  "nbconvert",
   "nbsphinx",
-  "requests",
+  "pygments>=2.6.1",
+  "requests",          # is this needed?
+  "setuptools",
   "sphinx>=7.3.7",
   "sphinx-autoapi",
   "sphinx-copybutton",
   "sphinx-issues",
-  "sphinx-rtd-theme",
-  "sphinx-tabs",
+  "sphinx-tabs",       # is this needed?
 ]
 optional-dependencies.gpu = [
   "cupy",
@@ -58,6 +65,9 @@ optional-dependencies.scores = [
   "scipy",
   "scores",
   "xarray",
+]
+optional-dependencies.stats = [
+  "scipy>=1.15",
 ]
 optional-dependencies.test = [
   "earthkit-data @ git+https://github.com/ecmwf/earthkit-data@release/1.0.0rc0",
@@ -72,9 +82,9 @@ urls.Homepage = "https://github.com/ecmwf/earthkit-meteo/"
 urls.Issues = "https://github.com/ecmwf/earthkit-meteo.issues"
 urls.Repository = "https://github.com/ecmwf/earthkit-meteo/"
 
-[tool.setuptools.packages.find]
-include = [ "earthkit.meteo" ]
-where = [ "src/" ]
+[tool.setuptools]
+packages.find.include = [ "earthkit.meteo" ]
+packages.find.where = [ "src/" ]
 
 [tool.setuptools_scm]
 version_file = "src/earthkit/meteo/_version.py"
@@ -85,8 +95,8 @@ lint.per-file-ignores."tests/**.py" = [ "E402" ]
 [tool.isort]
 profile = "black"
 
-[tool.coverage.run]
-branch = "true"
+[tool.coverage]
+run.branch = "true"
 
 [tool.pydocstyle]
 add_ignore = [ "D1", "D200", "D205", "D400", "D401" ]

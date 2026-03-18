@@ -22,7 +22,10 @@ from earthkit.meteo import constants
 
 @deprecation.deprecated(deprecated_in="0.7", details="Use pressure_on_hybrid_levels instead.")
 def pressure_at_model_levels(
-    A: NDArray[Any], B: NDArray[Any], sp: Union[float, NDArray[Any]], alpha_top: str = "ifs"
+    A: NDArray[Any],
+    B: NDArray[Any],
+    sp: Union[float, NDArray[Any]],
+    alpha_top: str = "ifs",
 ) -> Tuple[NDArray[Any], NDArray[Any], NDArray[Any], NDArray[Any]]:
     r"""Compute pressure at model full- and half-levels.
 
@@ -40,7 +43,8 @@ def pressure_at_model_levels(
     sp : number or ndarray
         Surface pressure (Pa)
     alpha_top : str, optional
-        Option to initialise alpha on the top of the model atmosphere (first half-level in vertical coordinate system). The possible values are:
+        Option to initialise alpha on the top of the model atmosphere (first
+        half-level in vertical coordinate system). The possible values are:
 
         - "ifs": alpha is set to log(2). See [IFS-CY47R3-Dynamics]_ (page 7) for details.
         - "arpege": alpha is set to 1.0
@@ -71,9 +75,9 @@ def pressure_at_model_levels(
 
     .. math::
 
-        p_{k+1/2} = A_{k+1/2} + p_{s}\; B_{k+1/2}
+        p_{k+1/2} = A_{k+1/2} + p_{s}  B_{k+1/2}
 
-        p_{k} = \frac{1}{2}\; (p_{k-1/2} + p_{k+1/2})
+        p_{k} = \frac{1}{2}  (p_{k-1/2} + p_{k+1/2})
 
     where
 
@@ -148,7 +152,8 @@ def pressure_at_model_levels(
 
 
 @deprecation.deprecated(
-    deprecated_in="0.7", details="Use relative_geopotential_thickness_on_hybrid_levels instead."
+    deprecated_in="0.7",
+    details="Use relative_geopotential_thickness_on_hybrid_levels instead.",
 )
 def relative_geopotential_thickness(
     alpha: ArrayLike, delta: ArrayLike, t: ArrayLike, q: ArrayLike
@@ -317,7 +322,9 @@ def pressure_at_height_levels(
     dphi_below = dphi[below]
 
     # print(
-    #     f"tdphi: {tdphi} above: {above} below: {below} dphi_above: {dphi_above} dphi_below  {dphi_below} p_full[above]: {p_full[above]} p_full[below]: {p_full[below]}"
+    #     f"tdphi: {tdphi} above: {above} below: {below} "
+    #     f"dphi_above: {dphi_above} dphi_below  {dphi_below} "
+    #     f"p_full[above]: {p_full[above]} p_full[below]: {p_full[below]}"
     # )
 
     # calculate the interpolation factor
@@ -372,7 +379,7 @@ def geopotential_from_geopotential_height(gh):
 
     .. math::
 
-        z = gh\; g
+        z = gh  g
 
     where :math:`g` is the gravitational acceleration on the surface of
     the Earth (see :py:attr:`meteo.constants.g`)
@@ -401,7 +408,7 @@ def geopotential_height_from_geometric_height(h, R_earth=constants.R_earth):
 
     .. math::
 
-        gh = \frac{h\; R_{earth}}{R_{earth} + h}
+        gh = \frac{h  R_{earth}}{R_{earth} + h}
 
     where :math:`R_{earth}` is the average radius of the Earth (see :py:attr:`meteo.constants.R_earth`)
     """
@@ -429,7 +436,7 @@ def geopotential_from_geometric_height(h, R_earth=constants.R_earth):
 
     .. math::
 
-        z = \frac{h\; g\; R_{earth}}{R_{earth} + h}
+        z = \frac{h  g  R_{earth}}{R_{earth} + h}
 
     where
 
@@ -461,7 +468,7 @@ def geometric_height_from_geopotential_height(gh, R_earth=constants.R_earth):
 
     .. math::
 
-        h = \frac{R_{earth}\; gh}{R_{earth} - gh}
+        h = \frac{R_{earth}  gh}{R_{earth} - gh}
 
     where :math:`R_{earth}` is the average radius of the Earth (see :py:attr:`meteo.constants.R_earth`)
     """
@@ -587,9 +594,9 @@ def pressure_on_hybrid_levels(
 
     .. math::
 
-        p_{k+1/2} = A_{k+1/2} + p_{s}\; B_{k+1/2}
+        p_{k+1/2} = A_{k+1/2} + p_{s}  B_{k+1/2}
 
-        p_{k} = \frac{1}{2}\; (p_{k-1/2} + p_{k+1/2})
+        p_{k} = \frac{1}{2}  (p_{k-1/2} + p_{k+1/2})
 
     where
 

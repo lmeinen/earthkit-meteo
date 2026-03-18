@@ -37,14 +37,17 @@ def spread(fcst: T, over: str | list[str], reference: T | None = None) -> T:
     over : str or list of str
         The dimension(s) over which to compute the spread.
     reference : xarray object, optional
-        The reference xarray to compare against. If not provided, the mean of the forecast over `over` is used.
+        The reference xarray to compare against. If not provided, the mean of
+        the forecast over `over` is used.
 
     Returns
     -------
     xarray object
         The spread of the forecast compared to the reference.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(spread)(fcst, over, reference)
+    dispatched = dispatch(spread, fieldlist=False)
+    return dispatched(fcst, over, reference)
 
 
 def quantile_score(fcst: T, obs: T, tau: float, over: str | list[str]) -> T:
@@ -85,14 +88,17 @@ def quantile_score(fcst: T, obs: T, tau: float, over: str | list[str]) -> T:
     -------
     xarray object
         The quantile score of the forecast compared to the observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(quantile_score)(fcst, obs, tau, over)
+    dispatched = dispatch(quantile_score, fieldlist=False)
+    return dispatched(fcst, obs, tau, over)
 
 
 # TODO: try to unify returns with crps_from_cdf and crps_from_ensemble
 def crps_from_gaussian(fcst: xr.Dataset, obs: xr.DataArray) -> xr.DataArray:
     r"""
-    Calculates the continuous ranked probability score (CRPS) of a forecast described by mean and standard deviation.
+    Calculates the continuous ranked probability score (CRPS) of a forecast
+    described by mean and standard deviation.
 
     .. warning:: Experimental API. This function may change or be removed without notice.
 
@@ -102,7 +108,9 @@ def crps_from_gaussian(fcst: xr.Dataset, obs: xr.DataArray) -> xr.DataArray:
         :nowrap:
 
         \begin{align*}
-        \operatorname{CRPS}\left[ \mathcal{N}(\mu, \sigma^2), o \right] = &\sigma \left\{ \frac{o - \mu}{\sigma} \left[ 2 \Phi \left( \frac{o-\mu}{\sigma} \right) - 1\right] \right. \\
+        \operatorname{CRPS}\left[ \mathcal{N}(\mu, \sigma^2), o \right] =
+        &\sigma \left\{ \frac{o - \mu}{\sigma} \left[ 2 \Phi \left(
+        \frac{o-\mu}{\sigma} \right) - 1\right] \right. \\
         &\left. +2\phi\left( \frac{o - \mu}{\sigma}  \right) - \frac{1}{\sqrt{\pi}} \right\}
         \end{align*}
 
@@ -110,10 +118,18 @@ def crps_from_gaussian(fcst: xr.Dataset, obs: xr.DataArray) -> xr.DataArray:
 
     - :math:`\mathcal{N}(\mu, \sigma^2)` is the probabilistic (Gaussian) forecast,
     - :math:`o` are the observations,
-    - :math:`\phi\left( (o - \mu)/\sigma \right)` denotes the probability density function of the normal distribution with mean 0 and variance 1 evaluated at the normalised prediction error, :math:`(o - \mu)/\sigma`,
-    - :math:`\Phi\left( (o - \mu)/\sigma \right)` denotes the cumulative distribution function of the normal distribution with mean 0 and variance 1 evaluated at the normalised prediction error, :math:`(o - \mu)/\sigma`.
+    - :math:`\phi\left( (o - \mu)/\sigma \right)` denotes the probability
+      density function of the normal distribution with mean 0 and variance 1
+      evaluated at the normalised prediction error,
+      :math:`(o - \mu)/\sigma`,
+    - :math:`\Phi\left( (o - \mu)/\sigma \right)` denotes the cumulative
+      distribution function of the normal distribution with mean 0 and variance
+      1 evaluated at the normalised prediction error,
+      :math:`(o - \mu)/\sigma`.
 
-    Reference: Gneiting, Tilmann, et al. "Calibrated probabilistic forecasting using ensemble model output statistics and minimum CRPS estimation." Monthly weather review 133.5 (2005): 1098-1118.
+    Reference: Gneiting, Tilmann, et al. "Calibrated probabilistic forecasting
+    using ensemble model output statistics and minimum CRPS estimation."
+    Monthly weather review 133.5 (2005): 1098-1118.
 
     Parameters
     ----------
@@ -126,8 +142,10 @@ def crps_from_gaussian(fcst: xr.Dataset, obs: xr.DataArray) -> xr.DataArray:
     -------
     xarray.DataArray
         The CRPS of the Gaussian forecast compared to the observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(crps_from_gaussian)(fcst, obs)
+    dispatched = dispatch(crps_from_gaussian, fieldlist=False)
+    return dispatched(fcst, obs)
 
 
 def crps_from_ensemble(
@@ -149,7 +167,9 @@ def crps_from_ensemble(
         :nowrap:
 
         \begin{align*}
-        \operatorname{CRPS}\left[f, o\right] =  \frac{\sum_{i=1}^{M}(|f_i - o|)}{M} - \frac{\sum_{i=1}^{M}\sum_{j=1}^{M}(|f_i - f_j|)}{2K}
+        \operatorname{CRPS}\left[f, o\right] =
+        \frac{\sum_{i=1}^{M}(|f_i - o|)}{M} -
+        \frac{\sum_{i=1}^{M}\sum_{j=1}^{M}(|f_i - f_j|)}{2K}
         \end{align*}
 
     where:
@@ -158,11 +178,13 @@ def crps_from_ensemble(
     - :math:`o` are the observations,
     - :math:`K=M^2` for the 'ecdf' method and :math:`M(M-1)` for the 'fair' method,
 
-    With `return_components=True`, this function returns an ``xr.Dataset`` with variables for the decompositions defined below.
+    With `return_components=True`, this function returns an ``xr.Dataset``
+    with variables for the decompositions defined below.
 
     If the `decomposition_method="underover"`, the ``xr.Dataset`` variables values are
-    ``underforecast_penalty``, ``overforecast_penalty``, ``spread`` and either ``fcrps`` if `method="fair"` or ``crps`` if `method="ecdf"` (ordering is not
-    guaranteed and might differ). The overall CRPS is given by
+    ``underforecast_penalty``, ``overforecast_penalty``, ``spread`` and either
+    ``fcrps`` if `method="fair"` or ``crps`` if `method="ecdf"` (ordering is
+    not guaranteed and might differ). The overall CRPS is given by
     ``underforecast_penalty + overforecast_penalty - spread``.
 
     .. math::
@@ -175,15 +197,20 @@ def crps_from_ensemble(
         :nowrap:
 
         \begin{align*}
-        O(f, o) &= \frac{1}{M} \sum_{i=1}^{M} (f_i - o)\,\mathbb{1}_{\{f_i > o\}} \quad& \text{(overforecast penalty)} \\
-        U(f, o) &= \frac{1}{M} \sum_{i=1}^{M} (o - f_i)\,\mathbb{1}_{\{f_i < o\}} \quad& \text{(underforecast penalty)} \\
+        O(f, o) &= \frac{1}{M} \sum_{i=1}^{M} (f_i - o)\,
+        \mathbb{1}_{\{f_i > o\}} \quad& \text{(overforecast penalty)} \\
+        U(f, o) &= \frac{1}{M} \sum_{i=1}^{M} (o - f_i)\,
+        \mathbb{1}_{\{f_i < o\}} \quad& \text{(underforecast penalty)} \\
         S(f, f) &= \frac{1}{2K} \sum_{i=1}^{M} \sum_{j=1}^{M} |f_i - f_j| \quad& \text{(forecast spread term)}
         \end{align*}
 
     If the decomposition method is `decomposition_method="hersbach"`, the ``xr.Dataset`` variables values are
-    ``alpha``, ``beta``, ``crps`` and additionally also ``fcrps`` if `method="fair"` (ordering is not guaranteed and might differ).
+    ``alpha``, ``beta``, ``crps`` and additionally also ``fcrps`` if
+    `method="fair"` (ordering is not guaranteed and might differ).
 
-    We denote by :math:`x_1 \le x_2 \le \dots \le x_M` the members of the ensemble forecast :math:`f` after sorting. The unfair CRPS decomposition for `decomposition_method="hersbach"` is then given by
+    We denote by :math:`x_1 \le x_2 \le \dots \le x_M` the members of the
+    ensemble forecast :math:`f` after sorting. The unfair CRPS decomposition
+    for `decomposition_method="hersbach"` is then given by
 
     .. math::
         :nowrap:
@@ -225,7 +252,8 @@ def crps_from_ensemble(
         :nowrap:
 
         \begin{align*}
-        \operatorname{CRPS}\left[f, o\right] = \sum_{i=1}^{M} \alpha_i p_i^2 + \beta_i (1-p_i)^2 - \frac{G}{2M}
+        \operatorname{CRPS}\left[f, o\right] = \sum_{i=1}^{M} \alpha_i p_i^2 +
+        \beta_i (1-p_i)^2 - \frac{G}{2M}
         \end{align*}
 
     where
@@ -241,7 +269,9 @@ def crps_from_ensemble(
 
     .. seealso::
 
-        This function leverages the `scores.probability.crps_for_ensemble <https://scores.readthedocs.io/en/latest/api.html#scores.probability.crps_for_ensemble>`_ function.
+        This function leverages the
+        `scores.probability.crps_for_ensemble <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
 
     Parameters
     ----------
@@ -260,8 +290,10 @@ def crps_from_ensemble(
     -------
     xarray.DataArray or xarray.Dataset
         The CRPS of the ensemble forecast compared to the observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(crps_from_ensemble)(fcst, obs, over, method, return_components, decomposition_method)
+    dispatched = dispatch(crps_from_ensemble, fieldlist=False)
+    return dispatched(fcst, obs, over, method, return_components, decomposition_method)
 
 
 def crps_from_cdf(
@@ -306,7 +338,8 @@ def crps_from_cdf(
         :nowrap:
 
         \begin{align*}
-        O(f, o) &= \int_{\text{obs}}^{\infty}{w(x)\,(f(x) - 1)^2\,\text{d}x} \quad& \text{(overforecast penalty)} \\
+        O(f, o) &= \int_{\text{obs}}^{\infty}{w(x)\,(f(x) - 1)^2\,
+        \text{d}x} \quad& \text{(overforecast penalty)} \\
         U(f, o) &= \int_{-\infty}^{\text{obs}}{w(x)\,f(x)^2\,\text{d}x} \quad& \text{(underforecast penalty)}
         \end{align*}
 
@@ -315,7 +348,9 @@ def crps_from_cdf(
 
     .. seealso::
 
-        This function leverages the `scores.probability.crps_cdf <https://scores.readthedocs.io/en/latest/api.html#scores.probability.crps_cdf>`_ function.
+        This function leverages the
+        `scores.probability.crps_cdf <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
 
     Parameters
     ----------
@@ -336,5 +371,7 @@ def crps_from_cdf(
     -------
     xarray.DataArray or xarray.Dataset
         The CRPS of the CDF compared to the observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(crps_from_cdf)(fcst, obs, over, weight, return_components)
+    dispatched = dispatch(crps_from_cdf, fieldlist=False)
+    return dispatched(fcst, obs, over, weight, return_components)

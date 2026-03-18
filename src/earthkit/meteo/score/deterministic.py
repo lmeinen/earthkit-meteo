@@ -38,7 +38,9 @@ def error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.additive_bias>`_ function.
+        This function leverages the
+        `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
 
     Parameters
     ----------
@@ -57,8 +59,10 @@ def error(
     -------
     xarray object
         The error between the forecast and observations, possibly aggregated.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(error)(fcst, obs, agg_method, agg_dim, agg_weights)
+    dispatched = dispatch(error, fieldlist=False)
+    return dispatched(fcst, obs, agg_method, agg_dim, agg_weights)
 
 
 def mean_error(
@@ -87,7 +91,9 @@ def mean_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.additive_bias>`_ function.
+        This function leverages the
+        `scores.continuous.additive_bias <https://scores.readthedocs.io/en/latest/api.html>`_
+        function.
 
     Parameters
     ----------
@@ -104,8 +110,10 @@ def mean_error(
     -------
     xarray object
         The mean error between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(mean_error)(fcst, obs, over, weights)
+    dispatched = dispatch(mean_error, fieldlist=False)
+    return dispatched(fcst, obs, over, weights)
 
 
 def abs_error(
@@ -135,7 +143,9 @@ def abs_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_ function.
+        This function leverages the
+        `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_
+        function.
 
     Parameters
     ----------
@@ -156,8 +166,10 @@ def abs_error(
     -------
     xarray object
         The error between the forecast and observations, possibly aggregated.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(abs_error)(fcst, obs, agg_method, agg_dim, agg_weights, is_angular)
+    dispatched = dispatch(abs_error, fieldlist=False)
+    return dispatched(fcst, obs, agg_method, agg_dim, agg_weights, is_angular)
 
 
 def mean_abs_error(
@@ -187,7 +199,9 @@ def mean_abs_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_ function.
+        This function leverages the
+        `scores.continuous.mae <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mae>`_
+        function.
 
     Parameters
     ----------
@@ -206,8 +220,10 @@ def mean_abs_error(
     -------
     xarray object
         The mean absolute error between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(mean_abs_error)(fcst, obs, over, weights, is_angular)
+    dispatched = dispatch(mean_abs_error, fieldlist=False)
+    return dispatched(fcst, obs, over, weights, is_angular)
 
 
 def squared_error(
@@ -237,7 +253,9 @@ def squared_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_ function.
+        This function leverages the
+        `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_
+        function.
 
     Parameters
     ----------
@@ -258,8 +276,10 @@ def squared_error(
     -------
     xarray object
         The squared error between the forecast and observations, possibly aggregated.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(squared_error)(fcst, obs, agg_method, agg_dim, agg_weights, is_angular)
+    dispatched = dispatch(squared_error, fieldlist=False)
+    return dispatched(fcst, obs, agg_method, agg_dim, agg_weights, is_angular)
 
 
 def mean_squared_error(
@@ -289,7 +309,9 @@ def mean_squared_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_ function.
+        This function leverages the
+        `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_
+        function.
 
     Parameters
     ----------
@@ -308,8 +330,10 @@ def mean_squared_error(
     -------
     xarray object
         The mean squared error between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(mean_squared_error)(fcst, obs, over, weights, is_angular)
+    dispatched = dispatch(mean_squared_error, fieldlist=False)
+    return dispatched(fcst, obs, over, weights, is_angular)
 
 
 def root_mean_squared_error(
@@ -339,7 +363,9 @@ def root_mean_squared_error(
 
     .. seealso::
 
-        This function leverages the `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_ function.
+        This function leverages the
+        `scores.continuous.mse <https://scores.readthedocs.io/en/latest/api.html#scores.continuous.mse>`_
+        function.
 
     Parameters
     ----------
@@ -358,8 +384,10 @@ def root_mean_squared_error(
     -------
     xarray object
         The root mean squared error between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(root_mean_squared_error)(fcst, obs, over, weights, is_angular)
+    dispatched = dispatch(root_mean_squared_error, fieldlist=False)
+    return dispatched(fcst, obs, over, weights, is_angular)
 
 
 def standard_deviation_of_error(
@@ -407,8 +435,10 @@ def standard_deviation_of_error(
     -------
     xarray object
         The standard deviation of error between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(standard_deviation_of_error)(fcst, obs, over, weights)
+    dispatched = dispatch(standard_deviation_of_error, fieldlist=False)
+    return dispatched(fcst, obs, over, weights)
 
 
 def cosine_similarity(
@@ -454,8 +484,10 @@ def cosine_similarity(
     -------
     xarray object
         The cosine similarity between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(cosine_similarity)(fcst, obs, over, weights)
+    dispatched = dispatch(cosine_similarity, fieldlist=False)
+    return dispatched(fcst, obs, over, weights)
 
 
 def pearson_correlation(
@@ -508,5 +540,7 @@ def pearson_correlation(
     -------
     xarray object
         The correlation between the forecast and observations.
+    The function returns an object of the same type as the input arguments.
     """
-    return dispatch(pearson_correlation)(fcst, obs, over, weights)
+    dispatched = dispatch(pearson_correlation, fieldlist=False)
+    return dispatched(fcst, obs, over, weights)

@@ -6,6 +6,8 @@
 # granted to it by virtue of its status as an intergovernmental organisation nor
 # does it submit to any jurisdiction.
 
+from __future__ import annotations
+
 import numbers
 
 from ...utils.decorators import xarray_ufunc
@@ -27,7 +29,7 @@ def _ensure_compat(x, forbidden_dims=None):
     return x
 
 
-def fit_gumbel(sample, over):
+def fit_gumbel(sample, dim):
     """Gumbel distribution with parameters fitted to a sample of values.
 
     .. warning:: Experimental API. This function may change or be removed without notice.
@@ -39,8 +41,8 @@ def fit_gumbel(sample, over):
     ----------
     sample: xarray.DataArray
         Sample values.
-    over: str
-        The dimension over which to compute the parameters.
+    dim: str
+        Dimension name over which to compute the parameters.
 
     Returns
     -------
@@ -48,12 +50,12 @@ def fit_gumbel(sample, over):
         Fitting over a dimension of a multi-dimensional sample array, the
         outcome is a collection of (scalar-valued) distributions.
     """
-    if over not in sample.dims:
-        raise ValueError(f"cannot fit over dimension '{over}' with sample dimensions {sample.dims}")
-    over_axis = sample.dims.index(over)
-    parameter_dims = [dim for dim in sample.dims if dim != over]
+    if dim not in sample.dims:
+        raise ValueError(f"cannot fit over dimension '{dim}' with sample dimensions {sample.dims}")
+    axis = sample.dims.index(dim)
+    parameter_dims = [d for d in sample.dims if d != dim]
     parameter_coords = {dim: values for dim, values in sample.coords.items() if dim in parameter_dims}
-    return array.fit_gumbel(sample.data, over=over_axis, dims=parameter_dims, coords=parameter_coords)
+    return array.fit_gumbel(sample.data, dim=axis, dims=parameter_dims, coords=parameter_coords)
 
 
 def value_to_return_period(value, dist):
@@ -65,7 +67,7 @@ def value_to_return_period(value, dist):
     ----------
     value: number | xarray.DataArray
         Input value(s).
-    dist: GumbelDistribution
+    dist: earthkit.meteo.stats.array.GumbelDistribution
         Probability distribution.
 
     Returns
@@ -80,7 +82,10 @@ def value_to_return_period(value, dist):
             array.value_to_return_period,
             value,
             dist=dist,
-            xarray_ufunc_kwargs={"input_core_dims": [[]], "output_core_dims": [dist.dims]},
+            xarray_ufunc_kwargs={
+                "input_core_dims": [[]],
+                "output_core_dims": [dist.dims],
+            },
         )
         .assign_coords(dist.coords)
         .rename("return_period")
@@ -97,7 +102,7 @@ def return_period_to_value(return_period, dist):
     ----------
     return_period: number | xarray.DataArray
         Input return period.
-    dist: GumbelDistribution
+    dist: earthkit.meteo.stats.array.GumbelDistribution
         Probability distribution.
 
     Returns

@@ -38,7 +38,10 @@ def speed(u: xr.DataArray, v: xr.DataArray) -> xr.DataArray:
 
 
 def direction(
-    u: xr.DataArray, v: xr.DataArray, convention: str = "meteo", to_positive: bool = True
+    u: xr.DataArray,
+    v: xr.DataArray,
+    convention: str = "meteo",
+    to_positive: bool = True,
 ) -> xr.DataArray:
     r"""Compute the direction/angle of a vector quantity.
 
@@ -109,7 +112,15 @@ def xy_to_polar(
     In the target xy representation the x axis points East while the y axis points North.
 
     """
-    return xarray_ufunc(array.xy_to_polar, x, y, convention=convention)
+    return xarray_ufunc(
+        array.xy_to_polar,
+        x,
+        y,
+        convention=convention,
+        xarray_ufunc_kwargs={
+            "output_dtypes": [float, float],
+        },
+    )
 
 
 def polar_to_xy(
@@ -143,7 +154,15 @@ def polar_to_xy(
     In the target xy representation the x axis points East while the y axis points North.
 
     """
-    return xarray_ufunc(array.polar_to_xy, magnitude, direction, convention=convention)
+    return xarray_ufunc(
+        array.polar_to_xy,
+        magnitude,
+        direction,
+        convention=convention,
+        xarray_ufunc_kwargs={
+            "output_dtypes": [float, float],
+        },
+    )
 
 
 def w_from_omega(omega: xr.DataArray, t: xr.DataArray, p: xr.DataArray) -> xr.DataArray:
@@ -170,7 +189,7 @@ def w_from_omega(omega: xr.DataArray, t: xr.DataArray, p: xr.DataArray) -> xr.Da
 
     .. math::
 
-        w = - \frac{\omega\; t R_{d}}{p g}
+        w = - \frac{\omega  t R_{d}}{p g}
 
     where
 
@@ -247,7 +266,9 @@ def windrose(
 
     Notes
     -----
-    The ``sectors`` parameter defines the number of direction bins the 360 degreesThe sectors do not start at 0 degrees (North) but are shifted by half a sector size.
+    The ``sectors`` parameter defines the number of direction bins in 360
+    degrees. The sectors do not start at 0 degrees (North) but are shifted by
+    half a sector size.
     E.g. if ``sectors`` is 4 the sectors are defined as:
 
     .. image:: /_static/wind_sector.png
@@ -273,10 +294,10 @@ def windrose(
 
     res_da = xr.DataArray(
         res,
-        dims={"speed_bin": res.shape[0], "direction_bin": res.shape[1]},
+        dims=("speed_bin", "direction_bin"),
         coords={
-            "speed_bin": speed_bins[:-1],
-            "direction_bin": dir_bins[:-1],
+            "speed_bin": ("speed_bin", speed_bins[:-1]),
+            "direction_bin": ("direction_bin", dir_bins[:-1]),
         },
     )
 
