@@ -14,7 +14,7 @@ import pytest
 from earthkit.utils.array.namespace import _NUMPY_NAMESPACE
 from earthkit.utils.array.testing import NAMESPACE_DEVICES
 
-from earthkit.meteo import vertical
+import earthkit.meteo.vertical.array as vertical
 from earthkit.meteo.utils.testing import Tolerance
 
 np.set_printoptions(formatter={"float_kind": "{:.15f}".format})
