@@ -1329,7 +1329,7 @@ def interpolate_hybrid_to_pressure_levels(
         aux_min_level_data=aux_top_data,
         aux_max_level_coord=aux_bottom_p,
         aux_max_level_data=aux_bottom_data,
-        vertical_axis=vertical_axis,
+        vertical_dim=vertical_axis,
     )
 
 
@@ -1489,7 +1489,7 @@ def interpolate_hybrid_to_height_levels(
         aux_min_level_coord=aux_bottom_h,
         aux_max_level_coord=aux_top_h,
         aux_max_level_data=aux_top_data,
-        vertical_axis=vertical_axis,
+        vertical_dim=vertical_axis,
     )
 
 
@@ -1616,7 +1616,7 @@ def interpolate_pressure_to_height_levels(
         aux_min_level_coord=aux_bottom_h,
         aux_max_level_coord=aux_top_h,
         aux_max_level_data=aux_top_data,
-        vertical_axis=vertical_axis,
+        vertical_dim=vertical_axis,
     )
 
 
@@ -1629,7 +1629,7 @@ def interpolate_monotonic(
     aux_min_level_coord=None,
     aux_max_level_data=None,
     aux_max_level_coord=None,
-    vertical_axis: int = 0,
+    vertical_dim: int = 0,
 ) -> ArrayLike:
     """Interpolate data between the same type of monotonic coordinate levels.
 
@@ -1722,5 +1722,5 @@ def interpolate_monotonic(
         aux_min_level_coord,
         aux_max_level_data,
         aux_max_level_coord,
-        vertical_axis=vertical_axis,
+        vertical_axis=vertical_dim,
     )
