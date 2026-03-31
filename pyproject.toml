@@ -30,7 +30,7 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [
   "deprecation",
-  "earthkit-utils>=0.2,<0.99",
+  "earthkit-utils==1.0.0rc0",
   "numpy",
 ]
 optional-dependencies.all = [
@@ -70,7 +70,7 @@ optional-dependencies.stats = [
   "scipy>=1.15",
 ]
 optional-dependencies.test = [
-  "earthkit-data",
+  "earthkit-data==1.0.0rc0",
   "netcdf4",
   "pytest",
   "pytest-cov",
@@ -79,7 +79,7 @@ optional-dependencies.test = [
 ]
 urls.Documentation = "https://earthkit-meteo.readthedocs.io/"
 urls.Homepage = "https://github.com/ecmwf/earthkit-meteo/"
-urls.Issues = "https://github.com/ecmwf/earthkit-meteo.issues"
+urls.Issues = "https://github.com/ecmwf/earthkit-meteo/issues"
 urls.Repository = "https://github.com/ecmwf/earthkit-meteo/"
 
 [tool.setuptools]
