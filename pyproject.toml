@@ -30,7 +30,7 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [
   "deprecation",
-  "earthkit-utils>=0.2",
+  "earthkit-utils>=0.2,<0.99",
   "numpy",
 ]
 optional-dependencies.all = [
