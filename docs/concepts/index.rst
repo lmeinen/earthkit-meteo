@@ -1,9 +1,6 @@
-.. _explanations:
+.. _concepts:
 
 Concepts
 ===========================
 
-.. toctree::
-   :maxdepth: 2
-
-   references
+This section is currently under construction. Please check back later for explanations of the core ideas behind earthkit-meteo.

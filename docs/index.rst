@@ -4,6 +4,12 @@ Earthkit-meteo's documentation
 
 **earthkit-meteo** is a Python package providing meteorological computations using array input (Numpy, Torch and CuPy) and output. It is part of the :xref:`earthkit` ecosystem.
 
+.. important::
+
+    This software is in **release candidate** stage. It is not yet considered stable and may still undergo significant changes before the final 1.0 release. We welcome feedback and contributions as we approach that milestone.
+
+    See the :ref:`release notes <release-notes-1.0.0rc>` for details on the changes in this release.
+
 
 .. grid:: 1
    :gutter: 2
@@ -106,5 +112,6 @@ Have a feature request or found a bug? Feel free to open an
    :hidden:
 
    release-notes/index
+   references
    licence
    genindex
