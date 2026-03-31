@@ -29,7 +29,7 @@ def pressure_at_model_levels(
 ) -> Tuple[NDArray[Any], NDArray[Any], NDArray[Any], NDArray[Any]]:
     r"""Compute pressure at model full- and half-levels.
 
-    *Deprecated in version 0.7.0*
+    *Deprecated in version 1.0.0*
     See :ref:`deprecated-hybrid-pressure-at-model-levels` for details.
 
     Parameters
@@ -160,7 +160,7 @@ def relative_geopotential_thickness(
 ) -> ArrayLike:
     """Calculate the geopotential thickness with respect to the surface on hybrid (IFS model) full-levels.
 
-    *Deprecated in version 0.7.0*
+    *Deprecated in version 1.0.0*
     See :ref:`deprecated-hybrid-relative-geopotential-thickness` for details.
 
     Parameters
@@ -228,7 +228,7 @@ def pressure_at_height_levels(
 ) -> Union[float, NDArray[Any]]:
     """Calculate the pressure at a height above the surface from model full-levels.
 
-    *Deprecated in version 0.7.0*
+    *Deprecated in version 1.0.0*
     See :ref:`deprecated-hybrid-pressure-at-height-levels` for details.
 
     Parameters
@@ -520,7 +520,7 @@ def pressure_on_hybrid_levels(
 ) -> ArrayLike:
     r"""Compute pressure and related parameters on hybrid (IFS model) levels.
 
-    *New in version 0.7.0*: This function replaces the deprecated :func:`pressure_at_model_levels`.
+    *New in version 1.0.0*: This function replaces the deprecated :func:`pressure_at_model_levels`.
 
     Parameters
     ----------
@@ -754,7 +754,7 @@ def _compute_relative_geopotential_thickness_on_hybrid_levels(
 ) -> ArrayLike:
     """Compute the geopotential thickness between the surface and hybrid (IFS model) full-levels.
 
-    *New in version 0.7.0*: This function replaces the deprecated :func:`relative_geopotential_thickness`.
+    *New in version 1.0.0*: This function replaces the deprecated :func:`relative_geopotential_thickness`.
 
     Parameters
     ----------
@@ -828,7 +828,7 @@ def relative_geopotential_thickness_on_hybrid_levels_from_alpha_delta(
 ) -> ArrayLike:
     """Compute the geopotential thickness between the surface and hybrid full-levels (IFS model levels).
 
-    *New in version 0.7.0*: This function replaces the deprecated :func:`relative_geopotential_thickness`.
+    *New in version 1.0.0*: This function replaces the deprecated :func:`relative_geopotential_thickness`.
 
     Parameters
     ----------
@@ -909,7 +909,7 @@ def relative_geopotential_thickness_on_hybrid_levels(
 ) -> ArrayLike:
     """Compute the geopotential thickness between the surface and hybrid full-levels (IFS model levels).
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------
@@ -1013,7 +1013,7 @@ def geopotential_on_hybrid_levels(
 ):
     """Compute the geopotential on hybrid (IFS model) full-levels.
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------
@@ -1090,7 +1090,7 @@ def height_on_hybrid_levels(
 ):
     """Compute the height on hybrid (IFS model) full-levels.
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------
@@ -1226,7 +1226,7 @@ def interpolate_hybrid_to_pressure_levels(
 ):
     """Interpolate data from hybrid full-levels (IFS model levels) to pressure levels.
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------
@@ -1354,7 +1354,7 @@ def interpolate_hybrid_to_height_levels(
 ):
     """Interpolate data from hybrid full-levels (IFS model levels) to height levels.
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------
@@ -1509,7 +1509,7 @@ def interpolate_pressure_to_height_levels(
 ):
     """Interpolate data from pressure levels to height levels.
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------
@@ -1633,7 +1633,7 @@ def interpolate_monotonic(
 ) -> ArrayLike:
     """Interpolate data between the same type of monotonic coordinate levels.
 
-    *New in version 0.7.0*
+    *New in version 1.0.0*
 
     Parameters
     ----------

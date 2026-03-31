@@ -1,6 +1,6 @@
 .. _explanations:
 
-Concepts and Explanations
+Concepts
 ===========================
 
 .. toctree::
