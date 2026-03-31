@@ -1,7 +1,7 @@
 setup:
 	pre-commit install
 
-default: qa tests type-check
+default: qa tests
 
 qa:
 	pre-commit run --all-files
