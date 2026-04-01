@@ -139,9 +139,9 @@ html_js_files = [
     "custom.js",
 ]
 
-html_favicon = (
-    "https://raw.githubusercontent.com/ecmwf/logos/refs/heads/main/logos/earthkit/earthkit-logo-only.svg"
-)
+
+html_favicon = "./_static/earthkit-meteo-notext.svg"
+
 
 html_theme_options = {
     "light_css_variables": {
