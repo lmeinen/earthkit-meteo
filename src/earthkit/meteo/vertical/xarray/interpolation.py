@@ -343,7 +343,7 @@ def interpolate_sleve_to_theta_levels(
     th_tc_max = 1000.0
 
     # Define vertical target coordinates
-    # Sorting cannot be exploited for optimizations, since theta is
+    # Sorting cannot be exploited for optimisations, since theta is
     # not monotonous wrt to height tc values are stored in K
     tc_values = np.array(target_theta) * th_tc_unit_conversions[target_t_units]
     if np.any((tc_values < th_tc_min) | (tc_values > th_tc_max)):

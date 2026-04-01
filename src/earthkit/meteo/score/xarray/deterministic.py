@@ -75,7 +75,7 @@ def error(
 
     # TODO: support is_angular in the future
 
-    # TODO: Add comment explaining behavior here in scores
+    # TODO: Add comment explaining behaviour here in scores
     reduce_dim = agg_dim or []
 
     return scores.continuous.additive_bias(

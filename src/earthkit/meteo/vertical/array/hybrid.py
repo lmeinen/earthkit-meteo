@@ -102,4 +102,4 @@ def hybrid_level_parameters(n_levels: int, model: str = "ifs") -> Tuple[NDArray[
                 f"Hybrid level parameters not available for {n_levels} levels in model '{model}'."
             )
     else:
-        raise ValueError(f"Model '{model}' not recognized for hybrid level parameters.")
+        raise ValueError(f"Model '{model}' not recognised for hybrid level parameters.")

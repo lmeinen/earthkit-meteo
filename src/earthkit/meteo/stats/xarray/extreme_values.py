@@ -90,7 +90,7 @@ def value_to_return_period(value, dist):
         .assign_coords(dist.coords)
         .rename("return_period")
     )
-    # TODO assign metadata attributs (unit, etc.), but where from?
+    # TODO assign metadata attributes (unit, etc.), but where from?
 
 
 def return_period_to_value(return_period, dist):
