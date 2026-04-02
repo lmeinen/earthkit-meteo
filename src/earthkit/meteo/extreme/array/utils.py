@@ -28,13 +28,12 @@ def validate_extreme_shapes(
     clim_dim: int,
     ens_dim: int,
 ) -> None:
-    """Validate that clim and ens shapes match in shape"""
+    """Validate that clim and ens shapes match in shape."""
     clim_shape_tmp = list(clim_shape)
     clim_shape_tmp.pop(clim_dim)
     ens_shape_tmp = list(ens_shape)
     ens_shape_tmp.pop(ens_dim)
     if clim_shape_tmp != ens_shape_tmp:
         raise ValueError(
-            f"{func}(): clim and ens must match in shape "
-            f"{clim_dim=} {ens_dim=}. {clim_shape=}, {ens_shape=}"
+            f"{func}(): clim and ens must match in shape {clim_dim=} {ens_dim=}. {clim_shape=}, {ens_shape=}"
         )

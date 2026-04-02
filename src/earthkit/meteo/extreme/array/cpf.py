@@ -9,8 +9,7 @@
 
 from earthkit.utils.array import array_namespace
 
-from .utils import flatten_extreme_input
-from .utils import validate_extreme_shapes
+from .utils import flatten_extreme_input, validate_extreme_shapes
 
 
 def _cpf(clim, ens, epsilon=None, from_zero=False):
@@ -52,7 +51,7 @@ def _cpf(clim, ens, epsilon=None, from_zero=False):
                     qv_c_2 = clim[icl - 1, :]
                     tau_c_2 = (icl - 1) / (nclim - 1)
 
-                    # condition of crossing situtaion:
+                    # condition of crossing situation:
                     idx = (qv_f < qv_c) & (qv_c_2 < qv_c) & prim
 
                     # intersection between two lines

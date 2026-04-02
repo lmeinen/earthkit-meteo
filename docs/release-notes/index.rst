@@ -8,7 +8,7 @@ Deprecated features
 .. toctree::
     :maxdepth: 1
 
-    deprecations
+    deprecation
 
 .. toctree::
     :maxdepth: 1

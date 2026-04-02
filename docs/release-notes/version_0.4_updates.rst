@@ -18,7 +18,7 @@ Version 0.4.1
 ===============
 
 Array formats
------------------------
+++++++++++++++++++++++
 
 Made almost all of the methods array format agnostic with support for Numpy, Torch and CuPy arrays/tensors as an input. The array backend is automatically detected from the input data type.
 
@@ -42,7 +42,7 @@ Made almost all of the methods array format agnostic with support for Numpy, Tor
 
 
 New features
------------------------
++++++++++++++++++++++++
 
 - Added the :py:mod:`earthkit.meteo.vertical` submodule
 - Added the :py:meth:`earthkit.meteo.stats.array.value_to_return_period` and :py:meth:`earthkit.meteo.stats.array.return_period_to_value` methods. They are based on a Gumbel-distribution fit to the sample data (:pr:`29`). See the following notebook example:
@@ -56,6 +56,6 @@ New features
 - Added the ``nan_policy`` option to :py:meth:`earthkit.meteo.score.array.crps` to handle nans. The possible values are: "raise", "propagate", and "omit". The default is "propagate". (:pr:`45`)
 
 New dependencies
------------------------
++++++++++++++++++++++++
 
 - earthkit-utils >= 0.0.1
