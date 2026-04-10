@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import Any, TypeAlias
 
+import earthkit.data as ekd
 from earthkit.data import FieldList  # type: ignore[import]
 from earthkit.utils.array import array_namespace
 
@@ -34,8 +35,12 @@ def speed(u: FieldList, v: FieldList) -> FieldList:
     FieldList
         Wind speed/magnitude (same units as ``u`` and ``v``)
     """
-    res = (u**2 + v**2) ** 0.5
-    return res.set({"parameter.variable": "ws"})
+    res = []
+    for u_field, v_field in zip(u, v):
+        new_field_with_old_metadata = (u_field**2 + v_field**2) ** 0.5
+        new_field = new_field_with_old_metadata.set({"parameter.variable": "ws"})
+        res.append(new_field)
+    return ekd.FieldList.from_fields(res)
 
 
 def direction(u: FieldList, v: FieldList, convention="meteo", to_positive=True) -> FieldList:

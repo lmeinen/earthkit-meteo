@@ -1,3 +1,4 @@
+import earthkit.data as ekd
 from earthkit.data import FieldList  # type: ignore[import]
 
 from earthkit.meteo import constants
@@ -28,5 +29,9 @@ def potential_temperature(t: FieldList, p: FieldList) -> FieldList:
     with :math:`\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`).
 
     """
-    res = t * (constants.p0 / p) ** constants.kappa
-    return res.set({"parameter.variable": "pt"})
+    res = []
+    for t_field, p_field in zip(t, p):
+        new_field_with_old_metadata = t_field * (constants.p0 / p_field) ** constants.kappa
+        new_field = new_field_with_old_metadata.set({"parameter.variable": "pt"})
+        res.append(new_field)
+    return ekd.FieldList.from_fields(res)
