@@ -34,30 +34,8 @@ def speed(u: FieldList, v: FieldList) -> FieldList:
     FieldList
         Wind speed/magnitude (same units as ``u`` and ``v``)
     """
-    if len(u) != len(v):
-        raise ValueError("u and v must have the same number of fields")
-
-    # Mapping u-wind component GRIB parameter IDs to wind speed parameter IDs
-    param_ids = {
-        131: 10,  # atmospheric wind
-        165: 207,  # 10m wind
-        228246: 228249,  # 100m wind
-        228239: 228241,  # 200m wind
-    }
-
-    result = []
-    for ui, vi in zip(u, v):
-        v = array.speed(ui.values, vi.values)
-
-        param_id_u = ui.metadata("paramId", default=None)
-        param_id_sp = param_ids.get(param_id_u, 10)
-        keys = {}
-        if param_id_sp is not None:
-            keys["paramId"] = param_id_sp
-
-        md = ui.metadata().override(**keys)
-        result.append(ui.clone(values=v, metadata=md))
-    return u.from_fields(result)
+    res = (u**2 + v**2) ** 0.5
+    return res.set({"parameter.variable": "ws"})
 
 
 def direction(u: FieldList, v: FieldList, convention="meteo", to_positive=True) -> FieldList:
