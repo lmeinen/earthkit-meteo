@@ -243,15 +243,14 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
 
     def _pressure(field, p_input=None):
         if p_input is None:
-            level, level_type = field.metadata("level", "typeOfLevel")
-            if level_type == "isobaricInhPa":
+            level, level_type, units = field.get(["vertical.level", "vertical.level_type", "vertical.units"])
+            if units == "hPa":
                 p_value = level * 100.0  # hPa to Pa
-            elif level_type == "isobaricInPa":
+            elif units == "Pa":
                 p_value = level
             else:
                 raise ValueError(
-                    f"Pressure level type '{level_type}' not supported. "
-                    "Only isobaric levels are supported when p is not provided."
+                    "Pressure level type is not supported. Only isobaric levels are supported when p is not provided."
                 )
             return p_value
         elif isinstance(p, FieldList):
