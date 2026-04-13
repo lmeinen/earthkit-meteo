@@ -230,3 +230,44 @@ def xarray_ufunc(func, *args, **kwargs):
         kwargs=kwargs,
         **merged,
     )
+
+
+def fieldlist_ufunc(func, *args, **kwargs):
+    import earthkit.data as ekd
+
+    fieldlist_ufunc_kwargs = kwargs.pop("fieldlist_ufunc_kwargs", None) or {}
+    variables = fieldlist_ufunc_kwargs.get("variables", {})
+    param_ids = fieldlist_ufunc_kwargs.get("param_ids", {})
+    default = fieldlist_ufunc_kwargs.get("default")
+    unit = fieldlist_ufunc_kwargs.get("param_unit")
+
+    result = []
+    for fields in zip(*args):
+        u0 = fields[0]
+        v = func(*(field.values if isinstance(field, ekd.Field) else field for field in fields), **kwargs)
+
+        name = None
+        var_u = u0.get("parameter.variable", default=None)
+        if var_u is not None:
+            name = variables.get(var_u)
+        else:
+            var_u = u0.get("metadata.paramId", default=None)
+            if var_u is not None:
+                name = param_ids.get(var_u)
+            else:
+                var_u = "unknown"
+
+        if default is None:
+            default = var_u
+
+        if name is None:
+            name = default
+
+        if unit is None:
+            unit = u0.get("parameter.units")
+
+        field = ekd.Field.from_field(u0)
+
+        result.append(field.set({"values": v, "parameter.variable": name, "parameter.units": unit}))
+
+    return ekd.FieldList.from_fields(result)
