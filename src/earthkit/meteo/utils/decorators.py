@@ -244,6 +244,7 @@ def fieldlist_ufunc(func, *args, **kwargs):
     result = []
     for fields in zip(*args):
         u0 = fields[0]
+        assert isinstance(u0, ekd.Field), "fieldlist_ufunc first argument must be a FieldList"
         v = func(*(field.values if isinstance(field, ekd.Field) else field for field in fields), **kwargs)
 
         name = None
@@ -266,8 +267,6 @@ def fieldlist_ufunc(func, *args, **kwargs):
         if unit is None:
             unit = u0.get("parameter.units")
 
-        field = ekd.Field.from_field(u0)
-
-        result.append(field.set({"values": v, "parameter.variable": name, "parameter.units": unit}))
+        result.append(u0.set({"values": v, "parameter.variable": name, "parameter.units": unit}))
 
     return ekd.FieldList.from_fields(result)
