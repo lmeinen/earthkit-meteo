@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any, TypeAlias
 
-from earthkit.data import FieldList  # type: ignore[import]
+from earthkit.data import Field, FieldList  # type: ignore[import]
 from earthkit.utils.array import array_namespace
 
 from earthkit.meteo.utils.decorators import fieldlist_ufunc
@@ -96,24 +96,17 @@ def direction(u: FieldList, v: FieldList, convention="meteo", to_positive=True) 
         :width: 400px
 
     """
-    if len(u) != len(v):
-        raise ValueError("u and v must have the same number of fields")
-
-    wind_param_ids = {131, 165, 228246, 228239}
-    dir_param_id = 3031  # wind direction
-
-    result = []
-    for ui, vi in zip(u, v):
-        v = array.direction(ui.values, vi.values, convention=convention, to_positive=to_positive)
-
-        param_id_u = ui.metadata("paramId", default=None)
-        keys = {}
-        if param_id_u in wind_param_ids:
-            keys["paramId"] = dir_param_id
-        md = ui.metadata().override(**keys)
-
-        result.append(ui.clone(values=v, metadata=md))
-    return u.from_fields(result)
+    fieldlist_ufunc_kwargs = {
+        "default": "wdir",
+    }
+    return fieldlist_ufunc(
+        array.direction,
+        u,
+        v,
+        fieldlist_ufunc_kwargs=fieldlist_ufunc_kwargs,
+        convention=convention,
+        to_positive=to_positive,
+    )
 
 
 def xy_to_polar(x: FieldList, y: FieldList, convention: str = "meteo") -> tuple[FieldList, FieldList]:
@@ -145,9 +138,6 @@ def xy_to_polar(x: FieldList, y: FieldList, convention: str = "meteo") -> tuple[
     In the target xy representation the x axis points East while the y axis points North.
 
     """
-    if len(x) != len(y):
-        raise ValueError("x and y must have the same number of fields")
-
     return speed(x, y), direction(x, y, convention=convention)
 
 
@@ -232,10 +222,6 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
         * :math:`g` is the gravitational acceleration (see :data:`earthkit.meteo.constants.g`)
 
     """
-    # TODO: ecCodes does not allow to set this id yet
-    # w_param_id = 260238  #  geometric vertical velocity
-    # out_md_keys = {"paramId": w_param_id}
-    out_md_keys = {}
     if len(omega) != len(t):
         raise ValueError(f"omega and t must have the same number of fields ({len(omega)} != {len(t)})")
 
@@ -278,10 +264,11 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
     for oi, ti, pi in zip(omega, t, p):
         p_value = _pressure(oi, pi)
         v = array.w_from_omega(oi.values, ti.values, p_value)
-        md = oi.metadata().override(**out_md_keys)
-        result.append(oi.clone(values=v, metadata=md))
+        field = Field.from_field(oi)
+        field = field.set({"values": v, "parameter.variable": "wz", "parameter.units": "m/s"})
+        result.append(field)
 
-    return omega.from_fields(result)
+    return FieldList.from_fields(result)
 
 
 def coriolis(data: FieldList) -> FieldList:
@@ -314,7 +301,7 @@ def coriolis(data: FieldList) -> FieldList:
     for field in data:
         lat = field.to_latlon()["lat"]
         c = array.coriolis(lat)
-        md = field.metadata().override(paramId=500235)
-        result.append(field.clone(values=c, metadata=md))
+        field = Field.from_field(field)
+        result.append(field.set({"values": c, "parameter.variable": "fc", "parameter.units": "1/s"}))
 
-    return data.from_fields(result)
+    return FieldList.from_fields(result)
