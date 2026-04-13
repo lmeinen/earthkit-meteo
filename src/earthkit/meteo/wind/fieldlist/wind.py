@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import Any, TypeAlias
 
+import earthkit.utils as eku
 from earthkit.data import Field, FieldList  # type: ignore[import]
 from earthkit.utils.array import array_namespace
 
@@ -229,7 +230,11 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
         if len(omega) != len(p):
             raise ValueError(f"omega and p must have the same number of fields ({len(omega)} != {len(p)})")
     elif p is None:
-        p = [None] * len(omega)
+        p = [
+            o.get("vertical.level")
+            * (1 * o.get("vertical.units", eku.units.Units.from_any("hPa"))).to_pint().to("Pa").magnitude
+            for o in omega
+        ]
     else:
         xp = array_namespace(p)
         p = xp.asarray(p)
@@ -241,33 +246,12 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
                 f"as the number of fields in omega({len(p)} != {len(omega)})"
             )
 
-    def _pressure(field, p_input=None):
-        if p_input is None:
-            level, level_type, units = field.get(["vertical.level", "vertical.level_type", "vertical.units"])
-            if units == "hPa":
-                p_value = level * 100.0  # hPa to Pa
-            elif units == "Pa":
-                p_value = level
-            else:
-                raise ValueError(
-                    "Pressure level type is not supported. Only isobaric levels are supported when p is not provided."
-                )
-            return p_value
-        elif isinstance(p, FieldList):
-            # p_input is a Field
-            return p_input.values
-        else:
-            return p_input
+    fieldlist_ufunc_kwargs = {
+        "default": "wz",
+        "param_unit": "m/s",
+    }
 
-    result = []
-    for oi, ti, pi in zip(omega, t, p):
-        p_value = _pressure(oi, pi)
-        v = array.w_from_omega(oi.values, ti.values, p_value)
-        field = Field.from_field(oi)
-        field = field.set({"values": v, "parameter.variable": "wz", "parameter.units": "m/s"})
-        result.append(field)
-
-    return FieldList.from_fields(result)
+    return fieldlist_ufunc(array.w_from_omega, omega, t, p, fieldlist_ufunc_kwargs=fieldlist_ufunc_kwargs)
 
 
 def coriolis(data: FieldList) -> FieldList:
