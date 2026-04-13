@@ -11,9 +11,9 @@ from __future__ import annotations
 
 from typing import Any, TypeAlias
 
-import earthkit.utils as eku
 from earthkit.data import Field, FieldList  # type: ignore[import]
 from earthkit.utils.array import array_namespace
+from earthkit.utils.units import Units
 
 from earthkit.meteo.utils.decorators import fieldlist_ufunc
 
@@ -231,9 +231,9 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
             raise ValueError(f"omega and p must have the same number of fields ({len(omega)} != {len(p)})")
     elif p is None:
         p = [
-            o.get("vertical.level")
-            * (1 * o.get("vertical.units", eku.units.Units.from_any("hPa"))).to_pint().to("Pa").magnitude
-            for o in omega
+            f.get("vertical.level")
+            * (1 * ((f.get("vertical.units", Units.from_any("hPa"))).to_pint())).to("Pa").magnitude
+            for f in omega
         ]
     else:
         xp = array_namespace(p)
