@@ -11,9 +11,10 @@ from __future__ import annotations
 
 from typing import Any, TypeAlias
 
-import earthkit.data as ekd
 from earthkit.data import FieldList  # type: ignore[import]
 from earthkit.utils.array import array_namespace
+
+from earthkit.meteo.utils.decorators import fieldlist_ufunc
 
 from .. import array
 
@@ -35,12 +36,26 @@ def speed(u: FieldList, v: FieldList) -> FieldList:
     FieldList
         Wind speed/magnitude (same units as ``u`` and ``v``)
     """
-    res = []
-    for u_field, v_field in zip(u, v):
-        new_field_with_old_metadata = (u_field**2 + v_field**2) ** 0.5
-        new_field = new_field_with_old_metadata.set({"parameter.variable": "ws"})
-        res.append(new_field)
-    return ekd.FieldList.from_fields(res)
+    param_ids = {
+        131: "ws",  # atmospheric wind, paramId=10
+        165: "10ws",  # 10m wind, paramId=207
+        228246: "100si",  # 100m wind, paramId=228249
+        228239: "200si",  # 200m wind, paramId=228241
+    }
+
+    variables = {
+        "u": "ws",  # atmospheric wind
+        "10u": "10ws",  # 10m wind
+        "100ua": "100si",  # 100m wind
+        "200ua": "200si",  # 200m wind
+    }
+
+    fieldlist_ufunc_kwargs = {
+        "variables": variables,
+        "param_ids": param_ids,
+        "default": "ws",
+    }
+    return fieldlist_ufunc(array.speed, u, v, fieldlist_ufunc_kwargs=fieldlist_ufunc_kwargs)
 
 
 def direction(u: FieldList, v: FieldList, convention="meteo", to_positive=True) -> FieldList:

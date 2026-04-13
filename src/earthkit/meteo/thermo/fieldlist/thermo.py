@@ -1,7 +1,8 @@
-import earthkit.data as ekd
 from earthkit.data import FieldList  # type: ignore[import]
 
-from earthkit.meteo import constants
+from earthkit.meteo.utils.decorators import fieldlist_ufunc
+
+from .. import array
 
 
 def potential_temperature(t: FieldList, p: FieldList) -> FieldList:
@@ -11,7 +12,7 @@ def potential_temperature(t: FieldList, p: FieldList) -> FieldList:
     ----------
     t: FieldList
         Temperature (K)
-    p: FieldList
+    p: FieldList or Iterable[float]
         Pressure (Pa)
 
     Returns
@@ -29,9 +30,6 @@ def potential_temperature(t: FieldList, p: FieldList) -> FieldList:
     with :math:`\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`).
 
     """
-    res = []
-    for t_field, p_field in zip(t, p):
-        new_field_with_old_metadata = t_field * (constants.p0 / p_field) ** constants.kappa
-        new_field = new_field_with_old_metadata.set({"parameter.variable": "pt"})
-        res.append(new_field)
-    return ekd.FieldList.from_fields(res)
+    fieldlist_ufunc_kwargs = {"default": "pt"}
+
+    return fieldlist_ufunc(array.potential_temperature, t, p, fieldlist_ufunc_kwargs=fieldlist_ufunc_kwargs)
