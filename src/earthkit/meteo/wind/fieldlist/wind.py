@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any, TypeAlias
 
-from earthkit.data import Field, FieldList  # type: ignore[import]
+from earthkit.data import FieldList  # type: ignore[import]
 from earthkit.utils.array import array_namespace
 from earthkit.utils.units import Units
 
@@ -282,9 +282,8 @@ def coriolis(data: FieldList) -> FieldList:
     """
     result = []
     for field in data:
-        lat = field.to_latlon()["lat"]
+        lat = field.geography.latitudes()
         c = array.coriolis(lat)
-        field = Field.from_field(field)
         result.append(field.set({"values": c, "parameter.variable": "fc", "parameter.units": "1/s"}))
 
     return FieldList.from_fields(result)
