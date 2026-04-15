@@ -231,8 +231,7 @@ def w_from_omega(omega: FieldList, t: FieldList, p: FieldList | ArrayLike | None
             raise ValueError(f"omega and p must have the same number of fields ({len(omega)} != {len(p)})")
     elif p is None:
         p = [
-            f.get("vertical.level")
-            * (1 * ((f.get("vertical.units", Units.from_any("hPa"))).to_pint())).to("Pa").magnitude
+            (f.get("vertical.level") * ((f.get("vertical.units", Units.from_any("hPa"))).to_pint())).to("Pa").magnitude
             for f in omega
         ]
     else:
