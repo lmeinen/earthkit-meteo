@@ -5,15 +5,15 @@ from earthkit.meteo.utils.decorators import fieldlist_ufunc
 from .. import array
 
 
-def potential_temperature(t: FieldList, p: FieldList) -> FieldList:
+def potential_temperature(t: FieldList, p: FieldList | None) -> FieldList:
     r"""Compute the potential temperature.
 
     Parameters
     ----------
     t: FieldList
         Temperature (K)
-    p: FieldList or Iterable[float]
-        Pressure (Pa)
+    p: FieldList, Iterable[float], or None
+        Pressure (Pa). If none, inferred from the field metadata.
 
     Returns
     -------
@@ -31,5 +31,13 @@ def potential_temperature(t: FieldList, p: FieldList) -> FieldList:
 
     """
     fieldlist_ufunc_kwargs = {"default": "pt"}
+
+    from earthkit.utils.units import Units
+
+    if p is None:
+        p = [
+            (f.get("vertical.level") * ((f.get("vertical.units", Units.from_any("hPa"))).to_pint())).to("Pa").magnitude
+            for f in t
+        ]  # convert to Pa
 
     return fieldlist_ufunc(array.potential_temperature, t, p, fieldlist_ufunc_kwargs=fieldlist_ufunc_kwargs)
