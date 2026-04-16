@@ -871,7 +871,7 @@ def potential_temperature(t: xr.DataArray, p: xr.DataArray) -> xr.DataArray:
 
     .. math::
 
-       \theta = t (\frac{10^{5}}{p})^{\kappa}
+       \theta = t \left(\frac{10^{5}}{p}\right)^{\kappa}
 
     with :math:`\kappa = R_{d}/c_{pd}` (see :data:`earthkit.meteo.constants.kappa`).
 
