@@ -5,7 +5,7 @@ from earthkit.meteo.utils.decorators import fieldlist_ufunc
 from .. import array
 
 
-def potential_temperature(t: FieldList, p: FieldList | None) -> FieldList:
+def potential_temperature(t: FieldList, p: FieldList | None = None) -> FieldList:
     r"""Compute the potential temperature.
 
     Parameters
