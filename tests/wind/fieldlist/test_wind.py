@@ -24,8 +24,6 @@ def test_fieldlist_wind_speed():
 
     ds = ekd.from_source("sample", "tuv_pl.grib").to_fieldlist()
 
-    print(ds)
-
     u = ds.sel({"parameter.variable": "u"}).order_by("level")
     v = ds.sel({"parameter.variable": "v"}).order_by("level")
     res = wind.speed(u, v)
@@ -78,4 +76,22 @@ def test_fieldlist_w_from_omega():
     assert res.values.shape == omega.values.shape
 
     ref = array_wind.w_from_omega(omega[0].values, t[0].values, omega[0].metadata("level") * 100.0)
+    assert np.allclose(res[0].values, ref, equal_nan=True)
+
+
+@pytest.mark.skipif(NO_EKD, reason="earthkit.data is not installed")
+def test_fieldlist_coriolis():
+    import earthkit.data as ekd
+
+    import earthkit.meteo.wind.fieldlist as wind
+
+    ds = ekd.from_source("sample", "tuv_pl.grib").to_fieldlist()
+
+    res = wind.coriolis(ds)
+
+    assert len(res) == 18
+    assert res.get("parameter.variable") == ["fc"] * 18
+    assert res.values.shape == ds.values.shape
+
+    ref = array_wind.coriolis(ds[0].geography.latitudes().reshape(ds[0].values.shape))
     assert np.allclose(res[0].values, ref, equal_nan=True)
