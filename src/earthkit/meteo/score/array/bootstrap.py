@@ -8,11 +8,22 @@
 #
 
 import random
+from collections.abc import Callable, Generator
+from typing import Any, TypeAlias
 
 from earthkit.utils.array import array_namespace
 
+ArrayLike: TypeAlias = Any
 
-def iter_samples(x, *args, dim=0, n_iter=100, n_samples=None, randrange=random.randrange):
+
+def iter_samples(
+    x: ArrayLike,
+    *args: ArrayLike,
+    dim: int | list[int] = 0,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+) -> Generator[tuple[ArrayLike, ...], None, None]:
     """Iterate over resampled arrays for bootstrapping.
 
     Parameters
@@ -55,7 +66,15 @@ def iter_samples(x, *args, dim=0, n_iter=100, n_samples=None, randrange=random.r
         yield sampled
 
 
-def resample(x, *args, dim=0, out_dim=0, n_iter=100, n_samples=None, randrange=random.randrange):
+def resample(
+    x: ArrayLike,
+    *args: ArrayLike,
+    dim: int | list[int] = 0,
+    out_dim: int = 0,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+) -> tuple[ArrayLike, ...]:
     """Resample arrays for bootstrapping.
 
     Parameters
@@ -95,16 +114,16 @@ def resample(x, *args, dim=0, out_dim=0, n_iter=100, n_samples=None, randrange=r
 
 
 def bootstrap(
-    func,
-    x,
-    *args,
-    dim=0,
-    out_dim=0,
-    n_iter=100,
-    n_samples=None,
-    randrange=random.randrange,
+    func: Callable[..., ArrayLike],
+    x: ArrayLike,
+    *args: ArrayLike,
+    dim: int | list[int] = 0,
+    out_dim: int = 0,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
     **kwargs,
-):
+) -> ArrayLike:
     """Run bootstrapping.
 
     Parameters

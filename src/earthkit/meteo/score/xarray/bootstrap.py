@@ -9,6 +9,7 @@
 
 import functools
 import random
+from collections.abc import Callable
 
 import xarray as xr
 
@@ -16,14 +17,14 @@ from .. import array
 
 
 def resample(
-    x,
-    *args,
-    dim=None,
-    out_dim="sample",
-    n_iter=100,
-    n_samples=None,
-    randrange=random.randrange,
-):
+    x: xr.DataArray,
+    *args: xr.DataArray,
+    dim: str = None,
+    out_dim: str = "sample",
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+) -> tuple[xr.DataArray, ...]:
     """Resample arrays for bootstrapping.
 
     Parameters
@@ -72,13 +73,13 @@ def resample(
 
 
 def bootstrap(
-    func,
-    *args,
-    dim=None,
-    out_dim="sample",
-    n_iter=100,
-    n_samples=None,
-    randrange=random.randrange,
+    func: Callable[..., xr.DataArray],
+    *args: xr.DataArray,
+    dim: str = None,
+    out_dim: str = "sample",
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
     **kwargs,
 ) -> xr.DataArray:
     """Run bootstrapping.

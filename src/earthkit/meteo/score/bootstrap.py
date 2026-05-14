@@ -7,21 +7,54 @@
 # nor does it submit to any jurisdiction.
 #
 
+from __future__ import annotations
+
 import random
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, TypeAlias, overload
 
 from ..utils.decorators import dispatch
 
+if TYPE_CHECKING:
+    import xarray  # type: ignore[import]
+
+ArrayLike: TypeAlias = Any
+
+
+@overload
+def resample(
+    x: ArrayLike,
+    *args: ArrayLike,
+    dim: int | list[int] = 0,
+    out_dim: int = 0,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+) -> tuple[ArrayLike, ...]: ...
+
+
+@overload
+def resample(
+    x: "xarray.DataArray",
+    *args: "xarray.DataArray",
+    dim: str = None,
+    out_dim: str = "sample",
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+) -> tuple["xarray.DataArray", ...]: ...
+
 
 def resample(
-    x,
-    *args,
-    dim=None,
-    out_dim=None,
-    n_iter=100,
-    n_samples=None,
-    randrange=random.randrange,
+    x: "ArrayLike | xarray.DataArray",
+    *args: "ArrayLike | xarray.DataArray",
+    dim: int | list[int] | str = None,
+    out_dim: int | str = None,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
     **kwargs,
-):
+) -> tuple[ArrayLike, ...] | tuple["xarray.DataArray", ...]:
     """Resample arrays for bootstrapping.
 
     Parameters
@@ -59,17 +92,44 @@ def resample(
     )
 
 
+@overload
 def bootstrap(
-    func,
-    x,
-    *args,
-    dim=None,
-    out_dim="sample",
-    n_iter=100,
-    n_samples=None,
-    randrange=random.randrange,
+    func: Callable[..., ArrayLike],
+    x: ArrayLike,
+    *args: ArrayLike,
+    dim: int | list[int] = 0,
+    out_dim: int = 0,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
     **kwargs,
-):
+) -> ArrayLike: ...
+
+
+@overload
+def bootstrap(
+    func: Callable[..., "xarray.DataArray"],
+    *args: "xarray.DataArray",
+    dim: str = None,
+    out_dim: str = "sample",
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+    **kwargs,
+) -> "xarray.DataArray": ...
+
+
+def bootstrap(
+    func: Callable[..., ArrayLike] | Callable[..., "xarray.DataArray"],
+    x: "ArrayLike | xarray.DataArray",
+    *args: "ArrayLike | xarray.DataArray",
+    dim: int | list[int] | str = None,
+    out_dim: int | str = None,
+    n_iter: int = 100,
+    n_samples: int | None = None,
+    randrange: Callable[[int], int] = random.randrange,
+    **kwargs,
+) -> "ArrayLike | xarray.DataArray":
     """Run bootstrapping.
 
     Parameters
