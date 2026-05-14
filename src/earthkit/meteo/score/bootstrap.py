@@ -13,6 +13,30 @@ def resample(
     randrange=random.randrange,
     **kwargs,
 ):
+    """Resample arrays for bootstrapping.
+
+    Parameters
+    ----------
+    x, *args: xarray object or array-like
+        Arrays to sample. Must have the same size along ``dim``
+    dim: str or int or list of int
+        Sample along this dimension (name or index/indices for array-like)
+    out_dim: str or int
+        Output dimension name (or index for array-like) for samples
+    n_iter: int
+        Number of bootstrapping iterations
+    n_samples: int or None
+        Number of samples for each iteration. If None, use the number of
+        inputs (size of ``x`` along the sampling dimension)
+    randrange: function (int -> int)
+        Random generator for integers: `randrange(n)` should return an
+        integer in `range(n)`
+
+    Returns
+    -------
+    tuple
+        Resampled arrays (one element per input array)
+    """
     dispatched = dispatch(resample, fieldlist=False, array=True)
     return dispatched(
         x,
@@ -37,6 +61,35 @@ def bootstrap(
     randrange=random.randrange,
     **kwargs,
 ):
+    """Run bootstrapping.
+
+    Parameters
+    ----------
+    func: function ((array, ..., **kwargs) -> array)
+        Function to bootstrap
+    x, *args: xarray object or array-like
+        Inputs to ``function``, sampled for bootstrapping. Must have the same
+        size along ``dim``
+    dim: str or int or list of int
+        Sample along this dimension (name or index/indices for array-like)
+    out_dim: str or int
+        Output dimension name (or index for array-like) for samples
+    n_iter: int
+        Number of bootstrapping iterations
+    n_samples: int or None
+        Number of samples for each iteration. If None, use the number of
+        inputs (size of ``x`` along the sampling dimension)
+    randrange: function (int -> int)
+        Random generator for integers: `randrange(n)` should return an
+        integer in `range(n)`
+    **kwargs
+        Additional keyword arguments to ``func``
+
+    Returns
+    -------
+    xarray object or array-like
+        Aggregated results of the bootstrapping process
+    """
     dispatched = dispatch(bootstrap, match=1, fieldlist=False, array=True)
     return dispatched(
         func,

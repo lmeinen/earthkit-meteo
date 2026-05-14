@@ -9,8 +9,7 @@ def iter_samples(x, *args, dim=0, n_iter=100, n_samples=None, randrange=random.r
     Parameters
     ----------
     x, *args: array-like
-        Inputs to the wrapped function, sampled for bootstrapping. Must have
-        the same size along ``dim``
+        Arrays to sample. Must have the same size along ``dim``
     dim: int or list of int
         Sample along this dimension index (either same for all or one per argument)
     n_iter: int
@@ -25,7 +24,7 @@ def iter_samples(x, *args, dim=0, n_iter=100, n_samples=None, randrange=random.r
     Yields
     ------
     tuple
-        Resampled arrays (one for each iteration)
+        Resampled arrays (one element per input array, one yield per iteration)
     """
     args = (x,) + args
     n_arrays = len(args)
@@ -53,8 +52,7 @@ def resample(x, *args, dim=0, out_dim=0, n_iter=100, n_samples=None, randrange=r
     Parameters
     ----------
     x, *args: array-like
-        Inputs to the wrapped function, sampled for bootstrapping. Must have
-        the same size along ``dim``
+        Arrays to sample. Must have the same size along ``dim``
     dim: int or list of int
         Sample along this dimension index (either same for all or one per argument)
     out_dim: int
@@ -71,7 +69,7 @@ def resample(x, *args, dim=0, out_dim=0, n_iter=100, n_samples=None, randrange=r
     Returns
     -------
     tuple
-        Resampled arrays (one for each iteration)
+        Resampled arrays (one element per input array)
     """
     if dim is None:
         dim = 0
