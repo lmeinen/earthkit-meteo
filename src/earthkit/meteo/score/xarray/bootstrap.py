@@ -16,6 +16,17 @@ import xarray as xr
 from .. import array
 
 
+def _unwrap(func):
+    @functools.wraps(func)
+    def unwrapped(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if isinstance(result, tuple) and len(result) == 1:
+            return result[0]
+        return result
+
+    return unwrapped
+
+
 def resample(
     x: xr.DataArray,
     *args: xr.DataArray,
@@ -54,13 +65,13 @@ def resample(
     if out_dim is None:
         out_dim = "sample"
     n_arrays = len(args) + 1
-    in_dims = [[dim] for _ in range(n_arrays)]
-    out_dims = [[out_dim] for _ in range(n_arrays)]
-    return xr.apply_ufunc(
+    in_dims = [(dim,) for _ in range(n_arrays)]
+    out_dims = [(dim, out_dim) for _ in range(n_arrays)]
+    resampled = xr.apply_ufunc(
         functools.partial(
-            array.resample,
-            sample_axis=-1,
-            out_axis=-1,
+            _unwrap(array.resample),
+            dim=-1,
+            out_dim=-1,
             n_iter=n_iter,
             n_samples=n_samples,
             randrange=randrange,
@@ -68,8 +79,12 @@ def resample(
         x,
         *args,
         input_core_dims=in_dims,
+        exclude_dims={dim},
         output_core_dims=out_dims,
     )
+    if n_arrays == 1:
+        return (resampled,)
+    return resampled
 
 
 def bootstrap(
@@ -99,7 +114,7 @@ def bootstrap(
         Number of bootstrapping iterations
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
-        inputs (size of ``x`` along the sampling dimension)
+        inputs (size of the first array along the sampling dimension)
     randrange: function (int -> int)
         Random generator for integers: `randrange(n)` should return an
         integer in `range(n)`
