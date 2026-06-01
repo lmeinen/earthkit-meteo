@@ -194,8 +194,8 @@ def polar_to_xy(
     result_2 = []
     for m, d in zip(magnitude, direction):
         v1, v2 = array.polar_to_xy(m.values, d.values, convention=convention)
-        result_1.append(m.clone(values=v1))
-        result_2.append(m.clone(values=v2))
+        result_1.append(m.set(values=v1))
+        result_2.append(m.set(values=v2))
     return magnitude.from_fields(result_1), magnitude.from_fields(result_2)
 
 
@@ -247,27 +247,6 @@ def w_from_omega(
 
     if p is None:
         p = pressure_from_metadata(omega)  # convert to Pa
-
-    # if isinstance(p, FieldList):
-    #     if len(omega) != len(p):
-    #         raise ValueError(f"omega and p must have the same number of fields ({len(omega)} != {len(p)})")
-    # elif p is None:
-    #     p = [
-    #         (f.get("vertical.level") * ((f.get("vertical.units", Units.from_any("hPa"))).to_pint()))
-    #         .to("Pa")
-    #         .magnitude
-    #         for f in omega
-    #     ]
-    # else:
-    #     xp = array_namespace(p)
-    #     p = xp.asarray(p)
-    #     if len(p.shape) == 0:
-    #         p = [p.item()] * len(omega)
-    #     if len(omega) != len(p):
-    #         raise ValueError(
-    #             "When p is array-like, it must have the same number elements "
-    #             f"as the number of fields in omega({len(p)} != {len(omega)})"
-    #         )
 
     fieldlist_ufunc_kwargs = {
         "default": "wz",
