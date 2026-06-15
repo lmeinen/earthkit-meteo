@@ -9,13 +9,13 @@
 
 from __future__ import annotations
 
-import random
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, TypeAlias, overload
 
 from ..utils.decorators import dispatch
 
 if TYPE_CHECKING:
+    import numpy.random as npr  # type: ignore[import]
     import xarray  # type: ignore[import]
 
 ArrayLike: TypeAlias = Any
@@ -29,7 +29,7 @@ def resample(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: "npr.Generator | None" = None,
 ) -> tuple[ArrayLike, ...]: ...
 
 
@@ -41,7 +41,7 @@ def resample(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: "npr.Generator | None" = None,
 ) -> tuple["xarray.DataArray", ...]: ...
 
 
@@ -52,7 +52,7 @@ def resample(
     out_dim: int | str = None,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> tuple[ArrayLike, ...] | tuple["xarray.DataArray", ...]:
     """Resample arrays for bootstrapping.
@@ -70,9 +70,8 @@ def resample(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
 
     Returns
     -------
@@ -87,7 +86,7 @@ def resample(
         out_dim=out_dim,
         n_iter=n_iter,
         n_samples=n_samples,
-        randrange=randrange,
+        rng=rng,
         **kwargs,
     )
 
@@ -101,7 +100,7 @@ def bootstrap(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> ArrayLike: ...
 
@@ -114,7 +113,7 @@ def bootstrap(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> "xarray.DataArray": ...
 
@@ -127,7 +126,7 @@ def bootstrap(
     out_dim: int | str = None,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> "ArrayLike | xarray.DataArray":
     """Run bootstrapping.
@@ -148,9 +147,8 @@ def bootstrap(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
     **kwargs
         Additional keyword arguments to ``func``
 
@@ -168,6 +166,6 @@ def bootstrap(
         out_dim=out_dim,
         n_iter=n_iter,
         n_samples=n_samples,
-        randrange=randrange,
+        rng=rng,
         **kwargs,
     )

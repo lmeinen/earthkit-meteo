@@ -7,10 +7,10 @@
 # nor does it submit to any jurisdiction.
 #
 
-import random
 from collections.abc import Callable, Generator
 from typing import Any, TypeAlias
 
+import numpy.random as npr
 from earthkit.utils.array import array_namespace
 
 ArrayLike: TypeAlias = Any
@@ -22,7 +22,7 @@ def iter_samples(
     dim: int | list[int] = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: npr.Generator | None = None,
 ) -> Generator[tuple[ArrayLike, ...], None, None]:
     """Iterate over resampled arrays for bootstrapping.
 
@@ -37,9 +37,8 @@ def iter_samples(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
 
     Yields
     ------
@@ -52,8 +51,11 @@ def iter_samples(
         dim = [dim for _ in range(n_arrays)]
     else:
         assert len(dim) == n_arrays, "dim must have one element per input array"
+    if rng is None:
+        rng = npr.default_rng()
     xp = array_namespace(*args)
-    arrays = tuple((xp.asarray(arr), axis) for arr, axis in zip(args, dim))
+    device = xp.device(x)
+    arrays = tuple((xp.asarray(arr, device=device), axis) for arr, axis in zip(args, dim))
     n_inputs = x.shape[dim[0]]
     assert all(y.shape[axis] == n_inputs for y, axis in arrays), (
         "Input arrays must have the same size along the sampling dimension"
@@ -61,7 +63,7 @@ def iter_samples(
     if n_samples is None:
         n_samples = n_inputs
     for _ in range(n_iter):
-        indices = [randrange(n_inputs) for _ in range(n_samples)]
+        indices = xp.asarray(rng.choice(n_inputs, size=n_samples), device=device)
         sampled = tuple(xp.take(y, indices=indices, axis=axis) for y, axis in arrays)
         yield sampled
 
@@ -73,7 +75,7 @@ def resample(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: npr.Generator | None = None,
 ) -> tuple[ArrayLike, ...]:
     """Resample arrays for bootstrapping.
 
@@ -90,9 +92,8 @@ def resample(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
 
     Returns
     -------
@@ -106,7 +107,7 @@ def resample(
     xp = array_namespace(x, *args)
     n_arrays = len(args) + 1
     samples = [[] for _ in range(n_arrays)]
-    samples_it = iter_samples(x, *args, dim=dim, n_iter=n_iter, n_samples=n_samples, randrange=randrange)
+    samples_it = iter_samples(x, *args, dim=dim, n_iter=n_iter, n_samples=n_samples, rng=rng)
     for sample in samples_it:
         for i in range(n_arrays):
             samples[i].append(sample[i])
@@ -121,7 +122,7 @@ def bootstrap(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: npr.Generator | None = None,
     **kwargs,
 ) -> ArrayLike:
     """Run bootstrapping.
@@ -142,9 +143,8 @@ def bootstrap(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
     **kwargs
         Additional keyword arguments to ``func``
 
@@ -160,6 +160,6 @@ def bootstrap(
         dim=dim,
         n_iter=n_iter,
         n_samples=n_samples,
-        randrange=randrange,
+        rng=rng,
     )
     return xp.stack([func(*sampled, **kwargs) for sampled in samples], axis=out_dim)

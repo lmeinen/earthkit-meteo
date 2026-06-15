@@ -7,9 +7,9 @@
 # nor does it submit to any jurisdiction.
 #
 
-import random
 from collections.abc import Callable
 
+import numpy.random as npr
 import xarray as xr
 
 
@@ -19,7 +19,7 @@ def resample(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: npr.Generator | None = None,
 ) -> tuple[xr.DataArray, ...]:
     """Resample arrays for bootstrapping.
 
@@ -36,9 +36,8 @@ def resample(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of the first array along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
 
     Returns
     -------
@@ -55,10 +54,12 @@ def resample(
     )
     if n_samples is None:
         n_samples = n_inputs
+    if rng is None:
+        rng = npr.default_rng()
     n_arrays = len(args)
     samples = [[] for _ in range(n_arrays)]
     for _ in range(n_iter):
-        indices = [randrange(n_inputs) for _ in range(n_samples)]
+        indices = rng.choice(n_inputs, size=n_samples)
         for i in range(n_arrays):
             samples[i].append(args[i].isel({dim: indices}))
     return tuple(xr.concat(sampled_arr, out_dim) for sampled_arr in samples)
@@ -71,7 +72,7 @@ def bootstrap(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
-    randrange: Callable[[int], int] = random.randrange,
+    rng: npr.Generator | None = None,
     **kwargs,
 ) -> xr.DataArray:
     """Run bootstrapping.
@@ -92,9 +93,8 @@ def bootstrap(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of the first array along the sampling dimension)
-    randrange: function (int -> int)
-        Random generator for integers: `randrange(n)` should return an
-        integer in `range(n)`
+    rng: numpy.random.Generator
+        Random number generator
     **kwargs
         Additional keyword arguments to ``func``
 
@@ -113,9 +113,11 @@ def bootstrap(
     )
     if n_samples is None:
         n_samples = n_inputs
+    if rng is None:
+        rng = npr.default_rng()
     results = []
     for _ in range(n_iter):
-        indices = [randrange(n_inputs) for _ in range(n_samples)]
+        indices = rng.choice(n_inputs, size=n_samples)
         sampled = tuple(arr.isel({dim: indices}) for arr in args)
         results.append(func(*sampled, **kwargs))
     return xr.concat(results, out_dim)
