@@ -29,6 +29,7 @@ def resample(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: "npr.Generator | None" = None,
 ) -> tuple[ArrayLike, ...]: ...
 
@@ -41,6 +42,7 @@ def resample(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: "npr.Generator | None" = None,
 ) -> tuple["xarray.DataArray", ...]: ...
 
@@ -52,6 +54,7 @@ def resample(
     out_dim: int | str = None,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> tuple[ArrayLike, ...] | tuple["xarray.DataArray", ...]:
@@ -70,6 +73,8 @@ def resample(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
 
@@ -86,6 +91,7 @@ def resample(
         out_dim=out_dim,
         n_iter=n_iter,
         n_samples=n_samples,
+        replace=replace,
         rng=rng,
         **kwargs,
     )
@@ -100,6 +106,7 @@ def bootstrap(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> ArrayLike: ...
@@ -113,6 +120,7 @@ def bootstrap(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> "xarray.DataArray": ...
@@ -126,6 +134,7 @@ def bootstrap(
     out_dim: int | str = None,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: "npr.Generator | None" = None,
     **kwargs,
 ) -> "ArrayLike | xarray.DataArray":
@@ -147,6 +156,8 @@ def bootstrap(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
     **kwargs
@@ -166,6 +177,7 @@ def bootstrap(
         out_dim=out_dim,
         n_iter=n_iter,
         n_samples=n_samples,
+        replace=replace,
         rng=rng,
         **kwargs,
     )

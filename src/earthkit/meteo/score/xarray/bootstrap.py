@@ -19,6 +19,7 @@ def resample(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: npr.Generator | None = None,
 ) -> tuple[xr.DataArray, ...]:
     """Resample arrays for bootstrapping.
@@ -36,6 +37,8 @@ def resample(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of the first array along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
 
@@ -59,7 +62,7 @@ def resample(
     n_arrays = len(args)
     samples = [[] for _ in range(n_arrays)]
     for _ in range(n_iter):
-        indices = rng.choice(n_inputs, size=n_samples)
+        indices = rng.choice(n_inputs, size=n_samples, replace=replace)
         for i in range(n_arrays):
             samples[i].append(args[i].isel({dim: indices}))
     return tuple(xr.concat(sampled_arr, out_dim) for sampled_arr in samples)
@@ -72,6 +75,7 @@ def bootstrap(
     out_dim: str = "sample",
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: npr.Generator | None = None,
     **kwargs,
 ) -> xr.DataArray:
@@ -93,6 +97,8 @@ def bootstrap(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of the first array along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
     **kwargs
@@ -117,7 +123,7 @@ def bootstrap(
         rng = npr.default_rng()
     results = []
     for _ in range(n_iter):
-        indices = rng.choice(n_inputs, size=n_samples)
+        indices = rng.choice(n_inputs, size=n_samples, replace=replace)
         sampled = tuple(arr.isel({dim: indices}) for arr in args)
         results.append(func(*sampled, **kwargs))
     return xr.concat(results, out_dim)

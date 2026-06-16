@@ -11,11 +11,11 @@ from earthkit.meteo.score import xarray as bootstrap
 
 
 def _create_rng(
-    num: int, seed: int, gen: type[np.random.BitGenerator] | None = None
+    num: int, size: int, seed: int, gen: type[np.random.BitGenerator] | None = None, replace: bool = True
 ) -> tuple[np.random.Generator, np.ndarray]:
     make_rng = np.random.default_rng if gen is None else (lambda s: np.random.Generator(gen(s)))
     rng = make_rng(seed)
-    seq = rng.choice(num, size=15)
+    seq = rng.choice(num, size=size, replace=replace)
     return make_rng(seed), xr.DataArray(seq, dims=["number"])
 
 
@@ -32,15 +32,18 @@ def _populate_kwarg(name: str, val: T | None, default: U, kwargs: dict) -> T | U
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, None), (6, True), (6, False), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_resample(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_resample(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 10
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(n_inputs), dims=["number"])
     samples = bootstrap.resample(x, dim="number", rng=rng, **kwargs)
@@ -48,20 +51,22 @@ def test_resample(n_iter: int | None, n_samples: int | None, gen: type[np.random
     assert samples[0].dims == ("sample", "number")
     assert samples[0].sizes["number"] == n_samples
     assert samples[0].sizes["sample"] == n_iter
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(samples[0].sel(sample=0), seq)
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, None), (6, True), (6, False), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_resample_2(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_resample_2(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 10
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(n_inputs), dims=["number"])
     y = 10 - x
@@ -73,21 +78,23 @@ def test_resample_2(n_iter: int | None, n_samples: int | None, gen: type[np.rand
     assert samples[1].dims == ("sample", "number")
     assert samples[1].sizes["sample"] == n_iter
     assert samples[1].sizes["number"] == n_samples
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(samples[0].sel(sample=0), seq)
     xr.testing.assert_allclose(samples[1], 10 - samples[0])
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, True), (2, False), (6, True), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_resample_2d(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_resample_2d(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 5
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(20).reshape(4, n_inputs), dims=["point", "number"])
     samples = bootstrap.resample(x, dim="number", rng=rng, **kwargs)
@@ -96,7 +103,6 @@ def test_resample_2d(n_iter: int | None, n_samples: int | None, gen: type[np.ran
     assert samples[0].sizes["sample"] == n_iter
     assert samples[0].sizes["point"] == 4
     assert samples[0].sizes["number"] == n_samples
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(
         samples[0].sel(sample=0),
         xr.concat([seq, seq + 5, seq + 10, seq + 15], "point"),
@@ -104,15 +110,18 @@ def test_resample_2d(n_iter: int | None, n_samples: int | None, gen: type[np.ran
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, True), (2, False), (6, True), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_resample_2diff(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_resample_2diff(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 5
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(20).reshape(4, n_inputs), dims=["point", "number"])
     y = xr.DataArray(np.arange(n_inputs), dims=["number"])
@@ -134,15 +143,18 @@ def test_resample_2diff(n_iter: int | None, n_samples: int | None, gen: type[np.
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, None), (6, True), (6, False), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_resample_out_dim(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_resample_out_dim(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 10
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(n_inputs), dims=["number"])
     samples = bootstrap.resample(x, dim="number", out_dim="iteration", rng=rng, **kwargs)
@@ -150,39 +162,43 @@ def test_resample_out_dim(n_iter: int | None, n_samples: int | None, gen: type[n
     assert samples[0].dims == ("iteration", "number")
     assert samples[0].sizes["number"] == n_samples
     assert samples[0].sizes["iteration"] == n_iter
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(samples[0].sel(iteration=0), seq)
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, None), (6, True), (6, False), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_bootstrap(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_bootstrap(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 10
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(n_inputs), dims=["number"])
     values = bootstrap.bootstrap((lambda a: a.mean("number")), x, dim="number", rng=rng, **kwargs)
     assert values.dims == ("sample",)
     assert values.sizes["sample"] == n_iter
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(values.sel(sample=0), seq.mean("number"))
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, None), (6, True), (6, False), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_bootstrap_2(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_bootstrap_2(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 10
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(n_inputs), dims=["number"])
     y = 10 - x
@@ -191,40 +207,45 @@ def test_bootstrap_2(n_iter: int | None, n_samples: int | None, gen: type[np.ran
     )
     assert values.dims == ("sample",)
     assert values.sizes["sample"] == n_iter
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(values.sel(sample=0), 2 * seq.mean("number") - 10)
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, True), (2, False), (6, True), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_bootstrap_2d(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_bootstrap_2d(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 5
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(20).reshape(4, n_inputs), dims=["point", "number"])
     values = bootstrap.bootstrap((lambda a: a.mean("number")), x, dim="number", rng=rng, **kwargs)
     assert values.dims == ("sample", "point")
     assert values.sizes["sample"] == n_iter
     assert values.sizes["point"] == 4
-    m = seq.isel(number=slice(None, n_samples)).mean("number")
+    m = seq.mean("number")
     xr.testing.assert_allclose(values.sel(sample=0), xr.concat([m, m + 5, m + 10, m + 15], "point"))
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, True), (2, False), (6, True), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_bootstrap_2diff(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_bootstrap_2diff(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 5
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, _ = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(20).reshape(4, n_inputs), dims=["point", "number"])
     y = xr.DataArray(np.arange(n_inputs), dims=["number"])
@@ -234,24 +255,25 @@ def test_bootstrap_2diff(n_iter: int | None, n_samples: int | None, gen: type[np
     assert values.dims == ("sample", "point")
     assert values.sizes["sample"] == n_iter
     assert values.sizes["point"] == 4
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(values.sel(sample=0), xr.DataArray([0, 5, 10, 15], dims=["point"]))
 
 
 @pytest.mark.parametrize("n_iter", [None, 1, 5])
-@pytest.mark.parametrize("n_samples", [None, 2, 6, 15])
+@pytest.mark.parametrize("n_samples, replace", [(None, None), (2, None), (6, True), (6, False), (15, True)])
 @pytest.mark.parametrize("gen", [None, np.random.MT19937], ids=["default", "custom"])
-def test_bootstrap_out_dim(n_iter: int | None, n_samples: int | None, gen: type[np.random.BitGenerator] | None):
+def test_bootstrap_out_dim(
+    n_iter: int | None, n_samples: int | None, replace: bool | None, gen: type[np.random.BitGenerator] | None
+):
     n_inputs = 10
 
     kwargs = {}
     n_iter = _populate_kwarg("n_iter", n_iter, 100, kwargs)
     n_samples = _populate_kwarg("n_samples", n_samples, n_inputs, kwargs)
-    rng, seq = _create_rng(n_inputs, 2, gen)
+    replace = _populate_kwarg("replace", replace, True, kwargs)
+    rng, seq = _create_rng(n_inputs, n_samples, 2, gen, replace=replace)
 
     x = xr.DataArray(np.arange(n_inputs), dims=["number"])
     values = bootstrap.bootstrap((lambda a: a.mean("number")), x, dim="number", out_dim="iteration", rng=rng, **kwargs)
     assert values.dims == ("iteration",)
     assert values.sizes["iteration"] == n_iter
-    seq = seq.isel(number=slice(None, n_samples))
     xr.testing.assert_allclose(values.sel(iteration=0), seq.mean("number"))

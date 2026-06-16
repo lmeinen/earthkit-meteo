@@ -22,6 +22,7 @@ def iter_samples(
     dim: int | list[int] = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: npr.Generator | None = None,
 ) -> Generator[tuple[ArrayLike, ...], None, None]:
     """Iterate over resampled arrays for bootstrapping.
@@ -37,6 +38,8 @@ def iter_samples(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
 
@@ -63,7 +66,7 @@ def iter_samples(
     if n_samples is None:
         n_samples = n_inputs
     for _ in range(n_iter):
-        indices = xp.asarray(rng.choice(n_inputs, size=n_samples), device=device)
+        indices = xp.asarray(rng.choice(n_inputs, size=n_samples, replace=replace), device=device)
         sampled = tuple(xp.take(y, indices=indices, axis=axis) for y, axis in arrays)
         yield sampled
 
@@ -75,6 +78,7 @@ def resample(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: npr.Generator | None = None,
 ) -> tuple[ArrayLike, ...]:
     """Resample arrays for bootstrapping.
@@ -92,6 +96,8 @@ def resample(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
 
@@ -107,7 +113,7 @@ def resample(
     xp = array_namespace(x, *args)
     n_arrays = len(args) + 1
     samples = [[] for _ in range(n_arrays)]
-    samples_it = iter_samples(x, *args, dim=dim, n_iter=n_iter, n_samples=n_samples, rng=rng)
+    samples_it = iter_samples(x, *args, dim=dim, n_iter=n_iter, n_samples=n_samples, replace=replace, rng=rng)
     for sample in samples_it:
         for i in range(n_arrays):
             samples[i].append(sample[i])
@@ -122,6 +128,7 @@ def bootstrap(
     out_dim: int = 0,
     n_iter: int = 100,
     n_samples: int | None = None,
+    replace: bool = True,
     rng: npr.Generator | None = None,
     **kwargs,
 ) -> ArrayLike:
@@ -143,6 +150,8 @@ def bootstrap(
     n_samples: int or None
         Number of samples for each iteration. If None, use the number of
         inputs (size of ``x`` along the sampling dimension)
+    replace: bool
+        Sample with replacement (on by default)
     rng: numpy.random.Generator
         Random number generator
     **kwargs
@@ -160,6 +169,7 @@ def bootstrap(
         dim=dim,
         n_iter=n_iter,
         n_samples=n_samples,
+        replace=replace,
         rng=rng,
     )
     return xp.stack([func(*sampled, **kwargs) for sampled in samples], axis=out_dim)
