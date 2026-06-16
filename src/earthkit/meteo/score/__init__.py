@@ -19,6 +19,7 @@ from .deterministic import pearson_correlation
 from .deterministic import root_mean_squared_error
 from .deterministic import squared_error
 from .deterministic import standard_deviation_of_error
+from .deterministic import kge
 from .ensemble import crps_from_cdf
 from .ensemble import crps_from_ensemble
 from .ensemble import crps_from_gaussian
@@ -43,4 +44,5 @@ __all__ = [
     "spread",
     "squared_error",
     "standard_deviation_of_error",
+    "kge",
 ]
