@@ -620,12 +620,12 @@ def pressure_on_hybrid_levels(
         - :math:`A_{k+1/2}` and :math:`B_{k+1/2}` are the A- and B-coefficients defining
           the model levels.
 
-    For more details see [IFS-CY49R3-Dynamics]_ Chapter 2, Section 2.2.1.
+    For more details see [IFS-CY49R1-Dynamics]_ Chapter 2, Section 2.2.1.
 
 
     Examples
     --------
-    - :ref:`/how-tos/hybrid_levels.ipynb`
+    - :ref:`/how-tos/vertical/hybrid_levels_array.ipynb`
 
     """
     if isinstance(output, str):
@@ -839,7 +839,7 @@ def _compute_relative_geopotential_thickness_on_hybrid_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/hybrid_levels.ipynb`
+    - :ref:`/how-tos/vertical/hybrid_levels_array.ipynb`
 
 
     """
@@ -915,7 +915,7 @@ def relative_geopotential_thickness_on_hybrid_levels_from_alpha_delta(
 
     Examples
     --------
-    - :ref:`/how-tos/hybrid_levels.ipynb`
+    - :ref:`/how-tos/vertical/hybrid_levels_array.ipynb`
 
 
     """
@@ -1007,7 +1007,7 @@ def relative_geopotential_thickness_on_hybrid_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/hybrid_levels.ipynb`
+    - :ref:`/how-tos/vertical/hybrid_levels_array.ipynb`
 
     """
     if A is None or B is None:
@@ -1112,7 +1112,7 @@ def geopotential_on_hybrid_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/hybrid_levels.ipynb`
+    - :ref:`/how-tos/vertical/hybrid_levels_array.ipynb`
 
     """
     z = relative_geopotential_thickness_on_hybrid_levels(t, q, sp, A, B, vertical_dim=vertical_dim, alpha_top=alpha_top)
@@ -1210,7 +1210,7 @@ def height_on_hybrid_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/hybrid_levels.ipynb`
+    - :ref:`/how-tos/vertical/hybrid_levels_array.ipynb`
 
     """
     if h_reference not in ["sea", "ground"]:
@@ -1357,7 +1357,7 @@ def interpolate_hybrid_to_pressure_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/interpolate_hybrid_to_pl.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_hybrid_to_pl_array.ipynb`
 
     """
     xp = array_namespace(data, A, B, sp)
@@ -1371,8 +1371,8 @@ def interpolate_hybrid_to_pressure_levels(
     p = pressure_on_hybrid_levels(sp, A, B, levels=levels, alpha_top=alpha_top, output="full")
     return interpolate_monotonic(
         data=data,
-        coord=p,
-        target_coord=target_p,
+        coords=p,
+        target_coords=target_p,
         interpolation=interpolation,
         aux_min_level_coord=aux_top_p,
         aux_min_level_data=aux_top_data,
@@ -1514,7 +1514,7 @@ def interpolate_hybrid_to_height_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/interpolate_hybrid_to_hl.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_hybrid_to_hl_array.ipynb`
 
     """
     h = height_on_hybrid_levels(
@@ -1532,8 +1532,8 @@ def interpolate_hybrid_to_height_levels(
 
     return interpolate_monotonic(
         data=data,
-        coord=h,
-        target_coord=target_h,
+        coords=h,
+        target_coords=target_h,
         interpolation=interpolation,
         aux_min_level_data=aux_bottom_data,
         aux_min_level_coord=aux_bottom_h,
@@ -1645,7 +1645,7 @@ def interpolate_pressure_to_height_levels(
 
     Examples
     --------
-    - :ref:`/how-tos/interpolate_pl_to_hl.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_pl_to_hl_array.ipynb`
 
     """
     if h_type == "geometric":
@@ -1660,8 +1660,8 @@ def interpolate_pressure_to_height_levels(
 
     return interpolate_monotonic(
         data=data,
-        coord=h,
-        target_coord=target_h,
+        coords=h,
+        target_coords=target_h,
         interpolation=interpolation,
         aux_min_level_data=aux_bottom_data,
         aux_min_level_coord=aux_bottom_h,
@@ -1673,8 +1673,8 @@ def interpolate_pressure_to_height_levels(
 
 def interpolate_monotonic(
     data: ArrayLike,
-    coord: ArrayLike,
-    target_coord: ArrayLike,
+    coords: ArrayLike,
+    target_coords: ArrayLike,
     interpolation: Literal["linear", "log", "nearest"] = "linear",
     aux_min_level_data: ArrayLike | None = None,
     aux_min_level_coord: ArrayLike | None = None,
@@ -1690,17 +1690,17 @@ def interpolate_monotonic(
         Data to be interpolated. The axis corresponding to the vertical
         coordinate is defined by the ``vertical_dim`` parameter.
         Must have at least two levels.
-    coord : ArrayLike
+    coords : ArrayLike
         Vertical coordinates related to ``data``. Either must have the same
         shape as ``data`` or be a 1D array with length equal to the size of
         the number of levels in ``data``. Must be monotonic (either sorted
         ascending or descending) along the vertical axis.
-    target_coord : ArrayLike
+    target_coords : ArrayLike
         Target coordinate levels to which ``data`` will be interpolated. It can be
         either a scalar or a 1D array of coordinate levels. Alternatively, it can be a
         multidimensional array with a vertical axis defined by `vertical_dim`. In this case
         the other axes/dimensions must match those of ``data``. Must be the same type
-        of coordinate as ``coord``.
+        of coordinate as ``coords``.
     interpolation : {"linear", "log", "nearest"}, default="linear"
         Interpolation mode. Possible values are:
 
@@ -1710,20 +1710,20 @@ def interpolate_monotonic(
 
     aux_min_level_data : ArrayLike|None, optional
         Auxiliary data for interpolation to target levels below the minimum level
-        of ``coord`` and above `aux_min_level_coord`. Can be a scalar or must have
+        of ``coords`` and above `aux_min_level_coord`. Can be a scalar or must have
         the same shape as a single level of ``data``.
     aux_min_level_coord : ArrayLike|None, optional
         Coordinates of ``aux_min_level_data``. Can be a scalar or must have the same
-        shape as a single level of ``data`` or ``coord``. Must be the same type
-        of coordinate as ``coord``.
+        shape as a single level of ``data`` or ``coords``. Must be the same type
+        of coordinate as ``coords``.
     aux_max_level_data : ArrayLike|None, optional
         Auxiliary data for interpolation to target levels above the maximum level
-        of ``coord`` and below `aux_max_level_coord`. Can be a scalar or must have
+        of ``coords`` and below `aux_max_level_coord`. Can be a scalar or must have
         the same shape as a single level of ``data``.
     aux_max_level_coord : ArrayLike|None, optional
         Coordinates of ``aux_max_level_data``. Can be a scalar or must have the
-        same shape as a single level of ``data`` or ``coord``. Must be the same type
-        of coordinate as ``coord``.
+        same shape as a single level of ``data`` or ``coords``. Must be the same type
+        of coordinate as ``coords``.
     vertical_dim : int
         Axis corresponding to the vertical coordinate in the input arrays and also in the
         output array. Default is 0 (first axis).
@@ -1732,7 +1732,7 @@ def interpolate_monotonic(
     Returns
     -------
     ArrayLike
-        Data interpolated to the target levels. The shape depends on the shape of ``target_coord``.
+        Data interpolated to the target levels. The shape depends on the shape of ``target_coords``.
         The axis corresponding to the vertical coordinate is defined by
         the ``vertical_dim`` parameter. When interpolation is not possible for a given target
         level (e.g., when the target level is outside the available level range),
@@ -1748,15 +1748,15 @@ def interpolate_monotonic(
     Notes
     -----
     - The ordering of the input coordinate levels is not checked.
-    - The units of ``coord`` and ``target_coord`` are assumed to be the same; no checks
+    - The units of ``coords`` and ``target_coords`` are assumed to be the same; no checks
       or conversions are performed.
 
     Examples
     --------
-    - :ref:`/how-tos/interpolate_hybrid_to_pl.ipynb`
-    - :ref:`/how-tos/interpolate_hybrid_to_hl.ipynb`
-    - :ref:`/how-tos/interpolate_pl_to_hl.ipynb`
-    - :ref:`/how-tos/interpolate_pl_to_pl.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_hybrid_to_pl_array.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_hybrid_to_hl_array.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_pl_to_hl_array.ipynb`
+    - :ref:`/how-tos/vertical/interpolate_pl_to_pl_array.ipynb`
 
     """
     from .monotonic import MonotonicInterpolator
@@ -1764,8 +1764,8 @@ def interpolate_monotonic(
     comp = MonotonicInterpolator()
     return comp(
         data,
-        coord,
-        target_coord,
+        coords,
+        target_coords,
         interpolation,
         aux_min_level_data,
         aux_min_level_coord,
