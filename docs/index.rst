@@ -6,9 +6,7 @@ Earthkit-meteo's documentation
 
 .. important::
 
-    This software is in **release candidate** stage. It is not yet considered stable and may still undergo significant changes before the final 1.0 release. We welcome feedback and contributions as we approach that milestone.
-
-    See the :ref:`release notes <release-notes-1.0.0rc>` for details on the changes in this release.
+     The latest major version 1.0 introduces significant changes. Please read the :ref:`release notes <release-notes-1.0>` for the details.
 
 
 .. grid:: 1
