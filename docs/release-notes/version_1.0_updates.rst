@@ -16,6 +16,7 @@ The following deprecations have been introduced in this release:
 -  :ref:`deprecated-hybrid-relative-geopotential-thickness`
 -  :ref:`deprecated-hybrid-pressure-at-height-levels`
 
+Another change is that all these methods now need to be imported from the `earthkit.meteo.vertical.array` submodule. Previously they were available in the `earthkit.meteo.vertical` submodule.
 
 Removed
 ----------------

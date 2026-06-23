@@ -6,7 +6,7 @@ Earthkit-meteo's documentation
 
 .. important::
 
-     The latest major version 1.0 introduces significant changes. Please read the :ref:`release notes <release-notes-1.0>` for the details.
+     The latest major version 1.0 introduces significant changes. Please read the :ref:`1.0 release notes <release-notes-1.0>` for the details.
 
 
 .. grid:: 1
