@@ -16,7 +16,12 @@ The following deprecations have been introduced in this release:
 -  :ref:`deprecated-hybrid-relative-geopotential-thickness`
 -  :ref:`deprecated-hybrid-pressure-at-height-levels`
 
-Another change is that all these methods now need to be imported from the `earthkit.meteo.vertical.array` submodule. Previously they were available in the `earthkit.meteo.vertical` submodule.
+Please note that the import paths for the deprecated functions have changed. See the next section for details.
+
+
+Changed import paths
+------------------------
+The deprecated functions listed above now have to be imported from the :py:mod:`earthkit.meteo.vertical.array` submodule. Previously they were available in the :py:mod:`earthkit.meteo.vertical` submodule.
 
 Removed
 ----------------
@@ -31,7 +36,11 @@ They can be both replaced by using the newly added :py:attr:`~earthkit.meteo.con
 
 High level interface
 -----------------------
-Added a high-level interface to most of the functions to support array, Xarray and earthkit-data FieldList/Field inputs. This offers automatic dispatching to the appropriate implementation based on the input type. This allows users to use the same function names and parameters regardless of the input type, while still benefiting from the optimized implementations for each type.
+A unified high-level interface has been added across most modules, supporting array, Xarray and :xref:`earthkit-data` FieldList/Field input. The appropriate implementation is selected automatically based on the input type, so the same function names and call signatures work regardless of how the data is represented.
+
+.. note::
+
+    Not all functions support every input type yet, and there may be minor API differences between implementations. Refer to each function's documentation for details.
 
 .. code-block:: python
 
@@ -42,6 +51,9 @@ Added a high-level interface to most of the functions to support array, Xarray a
 
     # For Xarray-based inputs
     speed = wind.speed(u_xarray, v_xarray)
+
+    # For FieldList-based inputs
+    speed = wind.speed(u_fieldlist, v_fieldlist)
 
 
 The actual implementations are now available in the ``array``, ``xarray`` and ``fieldlist``
@@ -71,7 +83,7 @@ Examples of using the high-level interface with various inputs can be found in t
 New vertical methods
 ------------------------------------------------
 
-The following coordinate computing functions have been added to the :py:mod:`earthkit.meteo.vertical` submodule for array and FieldList inputs:
+The following coordinate computing functions have been added for array and FieldList inputs (see: :py:mod:`earthkit.meteo.vertical.array` and :py:mod:`earthkit.meteo.vertical.fieldlist`):
 
   - hybrid_level_parameters
   - pressure_on_hybrid_levels
@@ -80,7 +92,7 @@ The following coordinate computing functions have been added to the :py:mod:`ear
   - geopotential_on_hybrid_levels
   - height_on_hybrid_levels
 
-The following vertical interpolation functions have been added to the :py:mod:`earthkit.meteo.vertical` submodule for array and FieldList inputs:
+The following vertical interpolation functions have been added for array and FieldList inputs (see: :py:mod:`earthkit.meteo.vertical.array` and :py:mod:`earthkit.meteo.vertical.fieldlist`):
 
   - interpolate_hybrid_to_pressure_levels
   - interpolate_hybrid_to_height_levels
@@ -95,9 +107,7 @@ The following vertical interpolation functions have been added to the :py:mod:`e
   - interpolate_sleve_to_theta_levels
 
 
-See the notebook examples:
-
-- :ref:`vertical-tutorials`
+See all notebook examples for vertical coordinate and interpolation functions in the :ref:`vertical-tutorials` tutorial section.
 
 
 Regimes
@@ -121,6 +131,14 @@ Key functions:
   from a dataset, with optional replacement
 - :py:func:`~earthkit.meteo.score.bootstrap.bootstrap` — compute a statistic
   over bootstrap samples
+
+New features
+-------------
+
+- Added option "bolton43" to compute the equivalent potential temperature using equation (43) from [Bolton1980]_ (:pr:`128`). See:
+
+  - :py:func:`~earthkit.meteo.thermo.ept_from_dewpoint`
+  - :py:func:`~earthkit.meteo.thermo.ept_from_specific_humidity`
 
 
 ``kge`` exposed at top-level score module
