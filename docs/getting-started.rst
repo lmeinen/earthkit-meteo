@@ -4,7 +4,7 @@ Installation and Getting Started
 Installing from PyPi
 --------------------
 
-Install **earthkit-meteo** with python3 (>= 3.10) and ``pip`` as follows:
+Install the latest version with python3 (>= 3.10) and ``pip`` as follows:
 
 .. code-block:: bash
 
