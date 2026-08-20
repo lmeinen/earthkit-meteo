@@ -17,8 +17,9 @@ The API is split into two layers:
   based on input type.
 """
 
-from .radiation import surface_downward_shortwave_radiation
+from .radiation import surface_downward_shortwave_radiation, surface_downwelling_longwave_flux
 
 __all__ = [
     "surface_downward_shortwave_radiation",
+    "surface_downwelling_longwave_flux",
 ]

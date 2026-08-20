@@ -13,6 +13,8 @@ from typing import Any, TypeAlias
 
 from earthkit.utils.array import array_namespace
 
+from earthkit.meteo import constants
+
 ArrayLike: TypeAlias = Any
 
 
@@ -48,3 +50,51 @@ def surface_downward_shortwave_radiation(diffuse: ArrayLike, direct: ArrayLike) 
     direct = xp.asarray(direct)
 
     return diffuse + direct
+
+
+def surface_downwelling_longwave_flux(
+    net_longwave: ArrayLike,
+    surface_temperature: ArrayLike,
+    emissivity: float = constants.emissivity_surface,
+) -> ArrayLike:
+    r"""Compute the downwelling longwave flux at the surface.
+
+    Parameters
+    ----------
+    net_longwave : number or array-like
+        Net (downward minus upward) longwave radiation flux at the surface (W/m2).
+        Downward fluxes are positive.
+    surface_temperature : number or array-like
+        Surface (skin) temperature (K)
+    emissivity : number
+        Broadband longwave emissivity of the surface (1). Defaults to
+        :data:`earthkit.meteo.constants.emissivity_surface`.
+
+    Returns
+    -------
+    number or array-like
+        Downwelling longwave flux at the surface (W/m2)
+
+
+    The surface longwave budget assumes a grey body radiating at the surface
+    temperature, so that the net flux is the absorbed fraction of the incoming
+    radiation minus the emitted one:
+
+    .. math::
+
+        R_{net} = \epsilon R_{lwd} - \epsilon \sigma T_{s}^{4}
+
+    Solving for the downwelling flux gives:
+
+    .. math::
+
+        R_{lwd} = \frac{R_{net}}{\epsilon} + \sigma T_{s}^{4}
+
+    where :math:`\sigma` is the Stefan-Boltzmann constant
+    (:data:`earthkit.meteo.constants.sigma`).
+    """
+    xp = array_namespace(net_longwave, surface_temperature)
+    net_longwave = xp.asarray(net_longwave)
+    surface_temperature = xp.asarray(surface_temperature)
+
+    return net_longwave / emissivity + constants.sigma * surface_temperature**4

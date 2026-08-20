@@ -21,6 +21,8 @@ TOTAL = [[0.0, 165.75], [900.0, 30.0]]  # W/m2
 PARAMETERS = {
     "diffuse": {"variable": "ssrd_diffuse", "units": "W/m2"},
     "direct": {"variable": "fdir", "units": "W/m2"},
+    "net_longwave": {"variable": "athb_s", "units": "W/m2"},
+    "surface_temperature": {"variable": "t", "units": "K"},
 }
 
 
@@ -73,3 +75,47 @@ def test_fieldlist_downward_shortwave_radiation_units():
     out = surface_downward_shortwave_radiation(diffuse, direct)
 
     assert str(out.get("parameter.units")) == str(diffuse.get("parameter.units"))
+
+
+NET_LONGWAVE = [[-60.0, -30.0], [-105.5, -12.25]]  # W/m2
+SURFACE_TEMPERATURE = [[280.0, 300.0], [265.3, 291.0]]  # K
+
+
+@pytest.mark.parametrize("input_type", ["fieldlist", "field"])
+def test_fieldlist_surface_downwelling_longwave_flux(input_type):
+    from earthkit.meteo.radiation import array
+    from earthkit.meteo.radiation.fieldlist import surface_downwelling_longwave_flux
+
+    net_longwave = _make_input_fieldlist("net_longwave", NET_LONGWAVE, input_type=input_type)
+    surface_temperature = _make_input_fieldlist("surface_temperature", SURFACE_TEMPERATURE, input_type=input_type)
+
+    out = surface_downwelling_longwave_flux(net_longwave, surface_temperature)
+
+    assert isinstance(out, type(net_longwave))
+
+    if input_type == "fieldlist":
+        assert len(out) == len(net_longwave)
+        assert out.get("parameter.variable") == ["surface_downwelling_longwave_flux"] * len(net_longwave)
+        for f, lw, t in zip(out, NET_LONGWAVE, SURFACE_TEMPERATURE):
+            ref = array.surface_downwelling_longwave_flux(np.array(lw), np.array(t))
+            np.testing.assert_allclose(f.values, ref)
+    else:
+        assert out.get("parameter.variable") == "surface_downwelling_longwave_flux"
+        ref = array.surface_downwelling_longwave_flux(np.array(NET_LONGWAVE[0]), np.array(SURFACE_TEMPERATURE[0]))
+        np.testing.assert_allclose(out.values, ref)
+
+
+def test_fieldlist_surface_downwelling_longwave_flux_emissivity():
+    """The emissivity keyword is forwarded and not mistaken for a field argument."""
+    from earthkit.meteo.radiation import array
+    from earthkit.meteo.radiation.fieldlist import surface_downwelling_longwave_flux
+
+    net_longwave = _make_input_fieldlist("net_longwave", NET_LONGWAVE, input_type="field")
+    surface_temperature = _make_input_fieldlist("surface_temperature", SURFACE_TEMPERATURE, input_type="field")
+
+    out = surface_downwelling_longwave_flux(net_longwave, surface_temperature, emissivity=0.9)
+    ref = array.surface_downwelling_longwave_flux(
+        np.array(NET_LONGWAVE[0]), np.array(SURFACE_TEMPERATURE[0]), emissivity=0.9
+    )
+
+    np.testing.assert_allclose(out.values, ref)

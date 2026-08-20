@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import xarray as xr
 
+from earthkit.meteo import constants
 from earthkit.meteo.utils.decorators import xarray_ufunc
 
 from .. import array
@@ -43,5 +44,47 @@ def surface_downward_shortwave_radiation(diffuse: xr.DataArray, direct: xr.DataA
     """
     return xarray_ufunc(array.surface_downward_shortwave_radiation, diffuse, direct).assign_attrs({
         "standard_name": "surface_downwelling_shortwave_flux_in_air",
+        "units": "W m-2",
+    })
+
+
+def surface_downwelling_longwave_flux(
+    net_longwave: xr.DataArray,
+    surface_temperature: xr.DataArray,
+    emissivity: float = constants.emissivity_surface,
+) -> xr.DataArray:
+    r"""Compute the downwelling longwave flux at the surface.
+
+    Parameters
+    ----------
+    net_longwave : xarray.DataArray
+        Net (downward minus upward) longwave radiation flux at the surface (W/m2).
+        Downward fluxes are positive.
+    surface_temperature : xarray.DataArray
+        Surface (skin) temperature (K)
+    emissivity : number
+        Broadband longwave emissivity of the surface (1). Defaults to
+        :data:`earthkit.meteo.constants.emissivity_surface`.
+
+    Returns
+    -------
+    xarray.DataArray
+        Downwelling longwave flux at the surface (W/m2)
+
+
+    The result is computed from the surface longwave budget of a grey body:
+
+    .. math::
+
+        R_{lwd} = \frac{R_{net}}{\epsilon} + \sigma T_{s}^{4}
+
+    """
+    return xarray_ufunc(
+        array.surface_downwelling_longwave_flux,
+        net_longwave,
+        surface_temperature,
+        emissivity=emissivity,
+    ).assign_attrs({
+        "standard_name": "surface_downwelling_longwave_flux_in_air",
         "units": "W m-2",
     })

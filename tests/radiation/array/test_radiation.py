@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 from earthkit.utils.array.testing import NAMESPACE_DEVICES
 
+from earthkit.meteo import constants
 from earthkit.meteo.radiation import array as radiation
 
 DIFFUSE = [0.0, 120.5, 310.0]  # W/m2
@@ -55,3 +56,39 @@ def test_downward_shortwave_radiation_nan_propagates():
     out = radiation.surface_downward_shortwave_radiation(diffuse, direct)
 
     np.testing.assert_allclose(out, np.array([3.0, np.nan]))
+
+
+NET_LONGWAVE = [-60.0, -30.0, -105.5]  # W/m2
+SURFACE_TEMPERATURE = [280.0, 300.0, 265.3]  # K
+
+
+@pytest.mark.parametrize("xp,device", NAMESPACE_DEVICES)
+def test_surface_downwelling_longwave_flux(xp, device):
+    net_longwave = xp.asarray(NET_LONGWAVE, device=device)
+    surface_temperature = xp.asarray(SURFACE_TEMPERATURE, device=device)
+
+    out = radiation.surface_downwelling_longwave_flux(net_longwave, surface_temperature)
+
+    ref = np.array(NET_LONGWAVE) / constants.emissivity_surface + constants.sigma * np.array(SURFACE_TEMPERATURE) ** 4
+    np.testing.assert_allclose(np.asarray(out), ref)
+
+
+def test_surface_downwelling_longwave_flux_emissivity():
+    """A unit emissivity reduces the budget to the Stefan-Boltzmann term."""
+    surface_temperature = np.array(SURFACE_TEMPERATURE)
+
+    out = radiation.surface_downwelling_longwave_flux(0.0, surface_temperature, emissivity=1.0)
+
+    np.testing.assert_allclose(out, constants.sigma * surface_temperature**4)
+
+
+def test_surface_downwelling_longwave_flux_roundtrip():
+    """The downwelling flux inverts the net flux of a grey body at the same temperature."""
+    surface_temperature = np.array(SURFACE_TEMPERATURE)
+    downwelling = np.array([300.0, 400.0, 250.0])
+    emissivity = 0.98
+    net_longwave = emissivity * (downwelling - constants.sigma * surface_temperature**4)
+
+    out = radiation.surface_downwelling_longwave_flux(net_longwave, surface_temperature, emissivity=emissivity)
+
+    np.testing.assert_allclose(out, downwelling)

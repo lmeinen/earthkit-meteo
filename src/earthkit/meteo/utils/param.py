@@ -128,6 +128,10 @@ _FIELD_PARAMS = {
         "variable": "surface_downward_shortwave_radiation",
         "units": "W/m2",
     },
+    "surface_downwelling_longwave_flux": {
+        "variable": "surface_downwelling_longwave_flux",
+        "units": "W/m2",
+    },
     "temperature": {"variable": "t", "units": "K", "paramId": 130, "edition": ("1", "2")},
     "toa_incident_solar_radiation": {
         "variable": "toa_incident_solar_radiation",

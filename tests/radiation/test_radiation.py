@@ -21,6 +21,11 @@ DIFFUSE = [0.0, 120.5, 310.0]  # W/m2
 DIRECT = [0.0, 45.25, 590.0]  # W/m2
 TOTAL = [0.0, 165.75, 900.0]  # W/m2
 
+NET_LONGWAVE = [-60.0, -30.0, -105.5]  # W/m2
+SURFACE_TEMPERATURE = [280.0, 300.0, 265.3]  # K
+
+OP_NAMES = ["surface_downward_shortwave_radiation", "surface_downwelling_longwave_flux"]
+
 
 def _signature(obj):
     if hasattr(obj, "dims") and hasattr(obj, "shape"):
@@ -31,12 +36,22 @@ def _signature(obj):
     return ("array", tuple(arr.shape))
 
 
+def _ops(diffuse, direct, net_longwave, surface_temperature):
+    return {
+        "surface_downward_shortwave_radiation": ((diffuse, direct), {}),
+        "surface_downwelling_longwave_flux": ((net_longwave, surface_temperature), {"emissivity": 0.98}),
+    }
+
+
 def _case_array(xp, device):
     import earthkit.meteo.radiation.array as impl
 
+    def _a(values):
+        return xp.asarray(values, device=device)
+
     return {
         "impl": impl,
-        "args": (xp.asarray(DIFFUSE, device=device), xp.asarray(DIRECT, device=device)),
+        "ops": _ops(_a(DIFFUSE), _a(DIRECT), _a(NET_LONGWAVE), _a(SURFACE_TEMPERATURE)),
     }
 
 
@@ -45,9 +60,12 @@ def _case_xarray():
 
     import earthkit.meteo.radiation.xarray as impl
 
+    def _da(values):
+        return xr.DataArray(np.asarray(values))
+
     return {
         "impl": impl,
-        "args": (xr.DataArray(np.asarray(DIFFUSE)), xr.DataArray(np.asarray(DIRECT))),
+        "ops": _ops(_da(DIFFUSE), _da(DIRECT), _da(NET_LONGWAVE), _da(SURFACE_TEMPERATURE)),
     }
 
 
@@ -67,35 +85,51 @@ def backend_case(request):
     return _case_array(xp, device)
 
 
-def test_highlevel_compatible_with_backend_api(backend_case):
-    args = backend_case["args"]
+@pytest.mark.parametrize("op_name", OP_NAMES)
+def test_highlevel_compatible_with_backend_api(backend_case, op_name):
+    args, kwargs = backend_case["ops"][op_name]
 
-    got = radiation.surface_downward_shortwave_radiation(*args)
-    ref = backend_case["impl"].surface_downward_shortwave_radiation(*args)
+    got = getattr(radiation, op_name)(*args, **kwargs)
+    ref = getattr(backend_case["impl"], op_name)(*args, **kwargs)
 
     assert _signature(got) == _signature(ref)
     np.testing.assert_allclose(np.asarray(got), np.asarray(ref))
-    np.testing.assert_allclose(np.asarray(got), np.array(TOTAL))
+
+
+def test_highlevel_shortwave_values(backend_case):
+    args, kwargs = backend_case["ops"]["surface_downward_shortwave_radiation"]
+
+    out = radiation.surface_downward_shortwave_radiation(*args, **kwargs)
+
+    np.testing.assert_allclose(np.asarray(out), np.array(TOTAL))
 
 
 @pytest.mark.skipif(NO_EKD, reason="EKD is not installed")
-def test_highlevel_dispatches_to_fieldlist():
+@pytest.mark.parametrize("op_name", OP_NAMES)
+def test_highlevel_dispatches_to_fieldlist(op_name):
     from earthkit.data import Field, FieldList
 
-    def _fieldlist(values, variable):
+    import earthkit.meteo.radiation.fieldlist as impl
+
+    def _fieldlist(values, variable, units):
         return FieldList.from_fields([
             Field.from_components(
                 values=np.array(values),
-                parameter={"variable": variable, "units": "W/m2"},
+                parameter={"variable": variable, "units": units},
                 vertical={"level": 0, "level_type": "surface"},
             )
         ])
 
-    diffuse = _fieldlist(DIFFUSE, "ssrd_diffuse")
-    direct = _fieldlist(DIRECT, "fdir")
+    if op_name == "surface_downward_shortwave_radiation":
+        args = (_fieldlist(DIFFUSE, "ssrd_diffuse", "W/m2"), _fieldlist(DIRECT, "fdir", "W/m2"))
+        kwargs = {}
+    else:
+        args = (_fieldlist(NET_LONGWAVE, "athb_s", "W/m2"), _fieldlist(SURFACE_TEMPERATURE, "t", "K"))
+        kwargs = {"emissivity": 0.98}
 
-    out = radiation.surface_downward_shortwave_radiation(diffuse, direct)
+    out = getattr(radiation, op_name)(*args, **kwargs)
+    ref = getattr(impl, op_name)(*args, **kwargs)
 
     assert len(out) == 1
-    assert out.get("parameter.variable") == ["surface_downward_shortwave_radiation"]
-    np.testing.assert_allclose(out[0].values, np.array(TOTAL))
+    assert out.get("parameter.variable") == [op_name]
+    np.testing.assert_allclose(out[0].values, ref[0].values)
