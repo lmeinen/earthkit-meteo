@@ -44,12 +44,15 @@ def surface_downward_shortwave_radiation(diffuse: ArrayLike, direct: ArrayLike) 
 
     Both inputs must refer to the same plane and use the same units, so the
     function equally applies to time-integrated fluxes (J/m2).
+
+    The result is clipped to non-negative values, since a downward flux cannot
+    be negative.
     """
     xp = array_namespace(diffuse, direct)
     diffuse = xp.asarray(diffuse)
     direct = xp.asarray(direct)
 
-    return diffuse + direct
+    return xp.clip(diffuse + direct, min=0.0)
 
 
 def surface_downwelling_longwave_flux(

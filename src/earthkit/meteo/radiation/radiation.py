@@ -82,6 +82,9 @@ def surface_downward_shortwave_radiation(
 
         R_{sw} = R_{diffuse} + R_{direct}
 
+    The result is clipped to non-negative values, since a downward flux cannot
+    be negative.
+
 
     Implementations
     ------------------------

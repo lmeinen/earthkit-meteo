@@ -41,6 +41,9 @@ def surface_downward_shortwave_radiation(diffuse: xr.DataArray, direct: xr.DataA
 
         R_{sw} = R_{diffuse} + R_{direct}
 
+    The result is clipped to non-negative values, since a downward flux cannot
+    be negative.
+
     """
     return xarray_ufunc(array.surface_downward_shortwave_radiation, diffuse, direct).assign_attrs({
         "standard_name": "surface_downwelling_shortwave_flux_in_air",

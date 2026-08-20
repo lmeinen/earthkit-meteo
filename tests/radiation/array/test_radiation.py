@@ -92,3 +92,14 @@ def test_surface_downwelling_longwave_flux_roundtrip():
     out = radiation.surface_downwelling_longwave_flux(net_longwave, surface_temperature, emissivity=emissivity)
 
     np.testing.assert_allclose(out, downwelling)
+
+
+@pytest.mark.parametrize("xp,device", NAMESPACE_DEVICES)
+def test_downward_shortwave_radiation_clipped(xp, device):
+    """Negative sums are clipped, NaNs are not."""
+    diffuse = xp.asarray([-5.0, 1.0, np.nan], device=device)
+    direct = xp.asarray([2.0, -4.0, 1.0], device=device)
+
+    out = radiation.surface_downward_shortwave_radiation(diffuse, direct)
+
+    np.testing.assert_allclose(np.asarray(out), np.array([0.0, 0.0, np.nan]))

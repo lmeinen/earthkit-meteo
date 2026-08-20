@@ -96,3 +96,16 @@ def test_xr_surface_downwelling_longwave_flux_dims_and_attrs():
     assert out.dims == ("point",)
     assert out.attrs["standard_name"] == "surface_downwelling_longwave_flux_in_air"
     assert out.attrs["units"] == "W m-2"
+
+
+def test_xr_downward_shortwave_radiation_clipped_lazily():
+    """Clipping happens inside the ufunc, so dask arrays are not computed eagerly."""
+    dask = pytest.importorskip("dask.array")
+
+    diffuse = _da([-5.0, 1.0, 310.0], dims=("point",)).chunk({"point": 2})
+    direct = _da([2.0, -4.0, 590.0], dims=("point",)).chunk({"point": 2})
+
+    out = radiation.surface_downward_shortwave_radiation(diffuse, direct)
+
+    assert isinstance(out.data, dask.Array)
+    np.testing.assert_allclose(out.compute().values, np.array([0.0, 0.0, 900.0]))
