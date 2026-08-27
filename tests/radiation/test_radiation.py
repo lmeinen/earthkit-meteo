@@ -26,6 +26,12 @@ SURFACE_TEMPERATURE = [280.0, 300.0, 265.3]  # K
 
 OP_NAMES = ["surface_downward_shortwave_radiation", "surface_downward_longwave_flux"]
 
+# The output parameter.variable is the GRIB shortName from FIELD_PARAMS, not the op name.
+OP_VARIABLES = {
+    "surface_downward_shortwave_radiation": "avg_sdswrf",
+    "surface_downward_longwave_flux": "avg_sdlwrf",
+}
+
 
 def _signature(obj):
     if hasattr(obj, "dims") and hasattr(obj, "shape"):
@@ -131,5 +137,5 @@ def test_highlevel_dispatches_to_fieldlist(op_name):
     ref = getattr(impl, op_name)(*args, **kwargs)
 
     assert len(out) == 1
-    assert out.get("parameter.variable") == [op_name]
+    assert out.get("parameter.variable") == [OP_VARIABLES[op_name]]
     np.testing.assert_allclose(out[0].values, ref[0].values)

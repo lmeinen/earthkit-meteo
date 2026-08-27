@@ -57,11 +57,11 @@ def test_fieldlist_downward_shortwave_radiation(input_type):
 
     if input_type == "fieldlist":
         assert len(out) == len(diffuse)
-        assert out.get("parameter.variable") == ["surface_downward_shortwave_radiation"] * len(diffuse)
+        assert out.get("parameter.variable") == ["avg_sdswrf"] * len(diffuse)
         for f, ref_vals in zip(out, TOTAL):
             np.testing.assert_allclose(f.values, np.array(ref_vals))
     else:
-        assert out.get("parameter.variable") == "surface_downward_shortwave_radiation"
+        assert out.get("parameter.variable") == "avg_sdswrf"
         np.testing.assert_allclose(out.values, np.array(TOTAL[0]))
 
 
@@ -95,12 +95,12 @@ def test_fieldlist_surface_downward_longwave_flux(input_type):
 
     if input_type == "fieldlist":
         assert len(out) == len(net_longwave)
-        assert out.get("parameter.variable") == ["surface_downward_longwave_flux"] * len(net_longwave)
+        assert out.get("parameter.variable") == ["avg_sdlwrf"] * len(net_longwave)
         for f, lw, t in zip(out, NET_LONGWAVE, SURFACE_TEMPERATURE):
             ref = array.surface_downward_longwave_flux(np.array(lw), np.array(t))
             np.testing.assert_allclose(f.values, ref)
     else:
-        assert out.get("parameter.variable") == "surface_downward_longwave_flux"
+        assert out.get("parameter.variable") == "avg_sdlwrf"
         ref = array.surface_downward_longwave_flux(np.array(NET_LONGWAVE[0]), np.array(SURFACE_TEMPERATURE[0]))
         np.testing.assert_allclose(out.values, ref)
 
