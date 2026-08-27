@@ -59,21 +59,21 @@ def surface_downward_shortwave_radiation(
     diffuse: "ArrayLike" | "xarray.DataArray" | "FieldList" | "Field",
     direct: "ArrayLike" | "xarray.DataArray" | "FieldList" | "Field",
 ) -> "ArrayLike" | "xarray.DataArray" | "FieldList" | "Field":
-    r"""Compute the global downward shortwave radiation at the surface.
+    r"""Compute the global downward shortwave radiation flux at the surface.
 
     Parameters
     ----------
     diffuse : array-like | xarray.DataArray | FieldList | Field
-        Downward diffuse shortwave radiation on a horizontal plane (W/m2)
+        Downward diffuse shortwave radiation flux on a horizontal plane (W/m2)
     direct : array-like | xarray.DataArray | FieldList | Field
-        Downward direct shortwave radiation on a horizontal plane (W/m2).
+        Downward direct shortwave radiation flux on a horizontal plane (W/m2).
         This is the direct beam projected onto the horizontal, not the
         direct normal irradiance.
 
     Returns
     -------
     array-like | xarray.DataArray | FieldList | Field
-        Downward shortwave radiation (W/m2)
+        Downward shortwave radiation flux (W/m2)
 
 
     The result is the sum of the two components:
@@ -104,7 +104,7 @@ def surface_downward_shortwave_radiation(
 
 
 @overload
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: "ArrayLike",
     surface_temperature: "ArrayLike",
     emissivity: float = ...,
@@ -112,7 +112,7 @@ def surface_downwelling_longwave_flux(
 
 
 @overload
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: "xarray.DataArray",
     surface_temperature: "xarray.DataArray",
     emissivity: float = ...,
@@ -120,7 +120,7 @@ def surface_downwelling_longwave_flux(
 
 
 @overload
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: "FieldList",
     surface_temperature: "FieldList",
     emissivity: float = ...,
@@ -128,19 +128,19 @@ def surface_downwelling_longwave_flux(
 
 
 @overload
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: "Field",
     surface_temperature: "Field",
     emissivity: float = ...,
 ) -> "Field": ...
 
 
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: "ArrayLike" | "xarray.DataArray" | "FieldList" | "Field",
     surface_temperature: "ArrayLike" | "xarray.DataArray" | "FieldList" | "Field",
     emissivity: float = constants.emissivity_surface,
 ) -> "ArrayLike" | "xarray.DataArray" | "FieldList" | "Field":
-    r"""Compute the downwelling longwave flux at the surface.
+    r"""Compute the downward longwave flux at the surface.
 
     Parameters
     ----------
@@ -167,7 +167,7 @@ def surface_downwelling_longwave_flux(
 
         R_{net} = \epsilon R_{lwd} - \epsilon \sigma T_{s}^{4}
 
-    Solving for the downwelling flux gives:
+    Solving for the downward flux gives:
 
     .. math::
 
@@ -179,16 +179,16 @@ def surface_downwelling_longwave_flux(
 
     Implementations
     ------------------------
-    :func:`surface_downwelling_longwave_flux` calls one of the following implementations
+    :func:`surface_downward_longwave_flux` calls one of the following implementations
     depending on the type of the input arguments:
 
-    - :py:meth:`earthkit.meteo.radiation.array.surface_downwelling_longwave_flux` for array-like
-    - :py:meth:`earthkit.meteo.radiation.xarray.surface_downwelling_longwave_flux`
+    - :py:meth:`earthkit.meteo.radiation.array.surface_downward_longwave_flux` for array-like
+    - :py:meth:`earthkit.meteo.radiation.xarray.surface_downward_longwave_flux`
       for xarray.DataArray
-    - :py:meth:`earthkit.meteo.radiation.fieldlist.surface_downwelling_longwave_flux`
+    - :py:meth:`earthkit.meteo.radiation.fieldlist.surface_downward_longwave_flux`
       for FieldList | Field
 
     The function returns an object of the same type as the input arguments.
     """
-    dispatched = dispatch(surface_downwelling_longwave_flux, array=True)
+    dispatched = dispatch(surface_downward_longwave_flux, array=True)
     return dispatched(net_longwave, surface_temperature, emissivity=emissivity)

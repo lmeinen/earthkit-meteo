@@ -64,34 +64,34 @@ SURFACE_TEMPERATURE = [280.0, 300.0, 265.3]  # K
         (-60.0, 280.0),
     ],
 )
-def test_xr_surface_downwelling_longwave_flux(net_longwave, surface_temperature):
-    out = radiation.surface_downwelling_longwave_flux(_da(net_longwave), _da(surface_temperature))
-    ref = radiation.array.surface_downwelling_longwave_flux(np.asarray(net_longwave), np.asarray(surface_temperature))
+def test_xr_surface_downward_longwave_flux(net_longwave, surface_temperature):
+    out = radiation.surface_downward_longwave_flux(_da(net_longwave), _da(surface_temperature))
+    ref = radiation.array.surface_downward_longwave_flux(np.asarray(net_longwave), np.asarray(surface_temperature))
 
     assert np.allclose(out.values, ref, equal_nan=True)
     if np.isscalar(net_longwave) and np.isscalar(surface_temperature):
         assert out.ndim == 0
 
 
-def test_xr_surface_downwelling_longwave_flux_emissivity():
+def test_xr_surface_downward_longwave_flux_emissivity():
     """The emissivity keyword is forwarded to the array backend."""
     net_longwave = _da(NET_LONGWAVE)
     surface_temperature = _da(SURFACE_TEMPERATURE)
 
-    out = radiation.surface_downwelling_longwave_flux(net_longwave, surface_temperature, emissivity=0.9)
-    ref = radiation.array.surface_downwelling_longwave_flux(
+    out = radiation.surface_downward_longwave_flux(net_longwave, surface_temperature, emissivity=0.9)
+    ref = radiation.array.surface_downward_longwave_flux(
         np.array(NET_LONGWAVE), np.array(SURFACE_TEMPERATURE), emissivity=0.9
     )
 
     assert np.allclose(out.values, ref)
-    assert not np.allclose(out.values, radiation.surface_downwelling_longwave_flux(net_longwave, surface_temperature))
+    assert not np.allclose(out.values, radiation.surface_downward_longwave_flux(net_longwave, surface_temperature))
 
 
-def test_xr_surface_downwelling_longwave_flux_dims_and_attrs():
+def test_xr_surface_downward_longwave_flux_dims_and_attrs():
     net_longwave = _da(NET_LONGWAVE, dims=("point",))
     surface_temperature = _da(SURFACE_TEMPERATURE, dims=("point",))
 
-    out = radiation.surface_downwelling_longwave_flux(net_longwave, surface_temperature)
+    out = radiation.surface_downward_longwave_flux(net_longwave, surface_temperature)
 
     assert out.dims == ("point",)
     assert out.attrs["standard_name"] == "surface_downwelling_longwave_flux_in_air"

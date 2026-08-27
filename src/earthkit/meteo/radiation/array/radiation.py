@@ -19,21 +19,21 @@ ArrayLike: TypeAlias = Any
 
 
 def surface_downward_shortwave_radiation(diffuse: ArrayLike, direct: ArrayLike) -> ArrayLike:
-    r"""Compute the global downward shortwave radiation at the surface.
+    r"""Compute the global downward shortwave radiation flux at the surface.
 
     Parameters
     ----------
     diffuse : number or array-like
-        Downward diffuse shortwave radiation on a horizontal plane (W/m2)
+        Downward diffuse shortwave radiation flux on a horizontal plane (W/m2)
     direct : number or array-like
-        Downward direct shortwave radiation on a horizontal plane (W/m2).
+        Downward direct shortwave radiation flux on a horizontal plane (W/m2).
         This is the direct beam projected onto the horizontal, not the
         direct normal irradiance.
 
     Returns
     -------
     number or array-like
-        Downward shortwave radiation (W/m2)
+        Downward shortwave radiation flux (W/m2)
 
 
     The result is the sum of the two components:
@@ -55,12 +55,12 @@ def surface_downward_shortwave_radiation(diffuse: ArrayLike, direct: ArrayLike) 
     return xp.clip(diffuse + direct, min=0.0)
 
 
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: ArrayLike,
     surface_temperature: ArrayLike,
     emissivity: float = constants.emissivity_surface,
 ) -> ArrayLike:
-    r"""Compute the downwelling longwave flux at the surface.
+    r"""Compute the downward longwave flux at the surface.
 
     Parameters
     ----------
@@ -87,7 +87,7 @@ def surface_downwelling_longwave_flux(
 
         R_{net} = \epsilon R_{lwd} - \epsilon \sigma T_{s}^{4}
 
-    Solving for the downwelling flux gives:
+    Solving for the downward flux gives:
 
     .. math::
 

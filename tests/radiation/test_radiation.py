@@ -24,7 +24,7 @@ TOTAL = [0.0, 165.75, 900.0]  # W/m2
 NET_LONGWAVE = [-60.0, -30.0, -105.5]  # W/m2
 SURFACE_TEMPERATURE = [280.0, 300.0, 265.3]  # K
 
-OP_NAMES = ["surface_downward_shortwave_radiation", "surface_downwelling_longwave_flux"]
+OP_NAMES = ["surface_downward_shortwave_radiation", "surface_downward_longwave_flux"]
 
 
 def _signature(obj):
@@ -39,7 +39,7 @@ def _signature(obj):
 def _ops(diffuse, direct, net_longwave, surface_temperature):
     return {
         "surface_downward_shortwave_radiation": ((diffuse, direct), {}),
-        "surface_downwelling_longwave_flux": ((net_longwave, surface_temperature), {"emissivity": 0.98}),
+        "surface_downward_longwave_flux": ((net_longwave, surface_temperature), {"emissivity": 0.98}),
     }
 
 

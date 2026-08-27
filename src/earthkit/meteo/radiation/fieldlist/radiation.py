@@ -19,21 +19,21 @@ from .. import array
 
 
 def surface_downward_shortwave_radiation(diffuse: FieldList | Field, direct: FieldList | Field) -> FieldList | Field:
-    r"""Compute the global downward shortwave radiation at the surface.
+    r"""Compute the global downward shortwave radiation flux at the surface.
 
     Parameters
     ----------
     diffuse : FieldList|Field
-        Downward diffuse shortwave radiation on a horizontal plane (W/m2)
+        Downward diffuse shortwave radiation flux on a horizontal plane (W/m2)
     direct : FieldList|Field
-        Downward direct shortwave radiation on a horizontal plane (W/m2).
+        Downward direct shortwave radiation flux on a horizontal plane (W/m2).
         This is the direct beam projected onto the horizontal, not the
         direct normal irradiance.
 
     Returns
     -------
     FieldList|Field
-        Downward shortwave radiation (W/m2). The result has the same type as the
+        Downward shortwave radiation flux (W/m2). The result has the same type as the
         input ``diffuse`` (FieldList or Field).
 
 
@@ -54,12 +54,12 @@ def surface_downward_shortwave_radiation(diffuse: FieldList | Field, direct: Fie
     )
 
 
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: FieldList | Field,
     surface_temperature: FieldList | Field,
     emissivity: float = constants.emissivity_surface,
 ) -> FieldList | Field:
-    r"""Compute the downwelling longwave flux at the surface.
+    r"""Compute the downward longwave flux at the surface.
 
     Parameters
     ----------
@@ -86,10 +86,10 @@ def surface_downwelling_longwave_flux(
         R_{lwd} = \frac{R_{net}}{\epsilon} + \sigma T_{s}^{4}
 
     """
-    fieldlist_ufunc_kwargs = {"default_variable": "surface_downwelling_longwave_flux"}
+    fieldlist_ufunc_kwargs = {"default_variable": "surface_downward_longwave_flux"}
 
     return fieldlist_ufunc(
-        array.surface_downwelling_longwave_flux,
+        array.surface_downward_longwave_flux,
         net_longwave,
         surface_temperature,
         emissivity=emissivity,

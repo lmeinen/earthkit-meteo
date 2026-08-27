@@ -9,9 +9,9 @@
 
 """Surface radiation related functions operating on xarray objects."""
 
-from .radiation import surface_downward_shortwave_radiation, surface_downwelling_longwave_flux
+from .radiation import surface_downward_shortwave_radiation, surface_downward_longwave_flux
 
 __all__ = [
     "surface_downward_shortwave_radiation",
-    "surface_downwelling_longwave_flux",
+    "surface_downward_longwave_flux",
 ]

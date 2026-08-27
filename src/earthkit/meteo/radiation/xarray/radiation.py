@@ -18,21 +18,21 @@ from .. import array
 
 
 def surface_downward_shortwave_radiation(diffuse: xr.DataArray, direct: xr.DataArray) -> xr.DataArray:
-    r"""Compute the global downward shortwave radiation at the surface.
+    r"""Compute the global downward shortwave radiation flux at the surface.
 
     Parameters
     ----------
     diffuse : xarray.DataArray
-        Downward diffuse shortwave radiation on a horizontal plane (W/m2)
+        Downward diffuse shortwave radiation flux on a horizontal plane (W/m2)
     direct : xarray.DataArray
-        Downward direct shortwave radiation on a horizontal plane (W/m2).
+        Downward direct shortwave radiation flux on a horizontal plane (W/m2).
         This is the direct beam projected onto the horizontal, not the
         direct normal irradiance.
 
     Returns
     -------
     xarray.DataArray
-        Downward shortwave radiation (W/m2)
+        Downward shortwave radiation flux (W/m2)
 
 
     The result is the sum of the two components:
@@ -51,12 +51,12 @@ def surface_downward_shortwave_radiation(diffuse: xr.DataArray, direct: xr.DataA
     })
 
 
-def surface_downwelling_longwave_flux(
+def surface_downward_longwave_flux(
     net_longwave: xr.DataArray,
     surface_temperature: xr.DataArray,
     emissivity: float = constants.emissivity_surface,
 ) -> xr.DataArray:
-    r"""Compute the downwelling longwave flux at the surface.
+    r"""Compute the downward longwave flux at the surface.
 
     Parameters
     ----------
@@ -83,7 +83,7 @@ def surface_downwelling_longwave_flux(
 
     """
     return xarray_ufunc(
-        array.surface_downwelling_longwave_flux,
+        array.surface_downward_longwave_flux,
         net_longwave,
         surface_temperature,
         emissivity=emissivity,
